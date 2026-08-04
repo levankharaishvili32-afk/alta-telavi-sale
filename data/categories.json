@@ -1,0 +1,68 @@
+[
+  {
+    "id": "kitchen",
+    "label": "სამზარეულოს ტექნიკა",
+    "subcategories": [
+      {
+        "id": "aerogrili",
+        "label": "აეროგრილები"
+      },
+      {
+        "id": "blenderi-da-choperi",
+        "label": "ბლენდერები და ჩოპერები"
+      },
+      {
+        "id": "samzareulos-tsvrili-teqnika",
+        "label": "სამზარეულოს წვრილი ტექნიკა"
+      },
+      {
+        "id": "yavis-aparati",
+        "label": "ყავის აპარატები"
+      },
+      {
+        "id": "yavis-moyvarultatvis",
+        "label": "ყავის აქსესუარები"
+      }
+    ]
+  },
+  {
+    "id": "care",
+    "label": "პერსონალური მოვლა",
+    "subcategories": [
+      {
+        "id": "tmis-uto",
+        "label": "თმის უთოები"
+      },
+      {
+        "id": "tmis-feni",
+        "label": "თმის ფენები"
+      },
+      {
+        "id": "trimeri",
+        "label": "ტრიმერები"
+      },
+      {
+        "id": "tsversaparsi",
+        "label": "წვერსაპარსები"
+      }
+    ]
+  },
+  {
+    "id": "home",
+    "label": "სახლის ტექნიკა",
+    "subcategories": [
+      {
+        "id": "klimaturi-teqnika",
+        "label": "კლიმატური ტექნიკა"
+      },
+      {
+        "id": "mtversasruti",
+        "label": "მტვერსასრუტები"
+      },
+      {
+        "id": "uto",
+        "label": "უთოები"
+      }
+    ]
+  }
+]
