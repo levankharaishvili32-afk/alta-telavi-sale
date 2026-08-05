@@ -222,7 +222,12 @@ function countBy(items: Product[], pick: (p: Product) => string | undefined) {
  */
 export function computeFacets(all: Product[], f: Filters): Facets {
   const preds = buildPredicates(f);
-  const specKeys = specKeysForCategory(f.category);
+  // Spec dimensions narrow to the subcategory only when exactly one is picked;
+  // with several selected there is no single scope whose attributes apply.
+  const specKeys = specKeysForCategory(
+    f.category,
+    f.subcategories.length === 1 ? f.subcategories[0] : null,
+  );
   const specPredKeys = Object.keys(preds).filter((k) => k.startsWith("spec:"));
 
   const forCategories = applyPredicates(all, preds, [

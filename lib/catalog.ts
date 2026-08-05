@@ -10,10 +10,11 @@ export const categories = categoriesJson as unknown as Category[];
 export const products = productsJson as unknown as Product[];
 
 /**
- * Spec keys that should be offered as filters, per category.
- * The *values* are always derived from the data, never hardcoded — this only
- * decides which spec dimensions are worth exposing (and in what order).
- * A category missing from this map falls back to the heuristic below.
+ * Spec keys that should be offered as filters, keyed by `category` and by
+ * `category/subcategory`. The *values* are always derived from the data, never
+ * hardcoded — this only decides which spec dimensions are worth exposing (and
+ * in what order). A scope missing from this map falls back to the heuristic
+ * below.
  */
 export const FILTERABLE_SPECS = filterableSpecsJson as Record<string, string[]>;
 
@@ -27,8 +28,13 @@ export const hasSpecFilters = Object.values(FILTERABLE_SPECS).some(
 );
 
 /**
- * Fallback for categories with no explicit config: any spec key present on at
- * least 60% of the category's products and having 2–8 distinct values.
+ * Fallback for scopes with no explicit config: any spec key present on at least
+ * 60% of the scope's products, having 2–8 distinct values, whose values are
+ * comma-free (the URL encoding is comma-separated) and which actually groups
+ * products rather than identifying them one by one.
+ *
+ * Kept deliberately in step with `buildFilterableSpecs` in
+ * `scripts/scrape-alta.mjs`, which precomputes the same thing at import time.
  */
 function inferSpecKeys(scoped: Product[]): string[] {
   const values = new Map<string, Set<string>>();
@@ -41,19 +47,43 @@ function inferSpecKeys(scoped: Product[]): string[] {
     }
   }
   return [...values.entries()]
-    .filter(
-      ([key, set]) =>
-        set.size >= 2 &&
-        set.size <= 8 &&
-        (seen.get(key) ?? 0) >= scoped.length * 0.6,
-    )
+    .filter(([key, set]) => {
+      const n = seen.get(key) ?? 0;
+      if (set.size < 2 || set.size > 8) return false;
+      if (n < scoped.length * 0.6) return false;
+      if (set.size > n / 1.5) return false;
+      return ![...set].some((v) => v.includes(","));
+    })
     .map(([key]) => key)
     .sort((a, b) => a.localeCompare(b, "ka"));
 }
 
-/** Spec dimensions available for filtering, given the selected category. */
-export function specKeysForCategory(categoryId: string | null): string[] {
+/**
+ * Spec dimensions available for filtering, given the selected category and —
+ * when the shopper has narrowed to one — subcategory. The narrower scope wins:
+ * a group as broad as "IT ტექნიკა" has almost no attribute in common across
+ * mice, monitors and printers, so its useful dimensions only exist per
+ * subcategory.
+ */
+export function specKeysForCategory(
+  categoryId: string | null,
+  subcategoryId: string | null = null,
+): string[] {
   if (!categoryId) return [];
+
+  if (subcategoryId) {
+    const scoped = FILTERABLE_SPECS[`${categoryId}/${subcategoryId}`];
+    if (scoped?.length) return scoped;
+    if (!scoped) {
+      const inferred = inferSpecKeys(
+        products.filter(
+          (p) => p.category === categoryId && p.subcategory === subcategoryId,
+        ),
+      );
+      if (inferred.length) return inferred;
+    }
+  }
+
   const configured = FILTERABLE_SPECS[categoryId];
   if (configured) return configured;
   return inferSpecKeys(products.filter((p) => p.category === categoryId));

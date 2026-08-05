@@ -1,10 +1,17 @@
 import Image from "next/image";
 import Link from "next/link";
+import { categories } from "@/lib/catalog";
 
+/**
+ * Derived from the imported catalog rather than hardcoded, so re-running
+ * `npm run scrape` with a different product list can never leave the nav
+ * pointing at a category that no longer exists.
+ */
 const NAV = [
-  { href: "/?cat=kitchen#catalog", label: "სამზარეულოს ტექნიკა" },
-  { href: "/?cat=care#catalog", label: "პერსონალური მოვლა" },
-  { href: "/?cat=home#catalog", label: "სახლის ტექნიკა" },
+  ...categories.map((c) => ({
+    href: `/?cat=${c.id}#catalog`,
+    label: c.label,
+  })),
   { href: "/?stock=1#catalog", label: "მარაგშია" },
 ];
 

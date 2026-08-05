@@ -11,6 +11,19 @@ const read = (p) => JSON.parse(readFileSync(resolve(root, p), "utf8"));
 
 const categories = read("data/categories.json");
 const products = read("data/products.json");
+const filterableSpecs = read("data/filterable-specs.json");
+
+/**
+ * Only spec keys offered as filters have to survive the URL round-trip, so the
+ * comma rule below is scoped to those — and scoped per product, since a key can
+ * be a clean facet for monitors and a prose blob for phones. A display-only
+ * value like "64-bit WEP, 128-bit WEP, WPA2-PSK" is fine on the detail page.
+ */
+const filterableKeysFor = (p) =>
+  new Set([
+    ...(filterableSpecs[p.category] ?? []),
+    ...(filterableSpecs[`${p.category}/${p.subcategory}`] ?? []),
+  ]);
 
 const errors = [];
 const warnings = [];
@@ -59,12 +72,13 @@ for (const [i, p] of products.entries()) {
   if (typeof p.stock !== "boolean") errors.push(`${where}: stock must be boolean`);
 
   if (p.specs && typeof p.specs === "object") {
+    const filterable = filterableKeysFor(p);
     for (const [k, v] of Object.entries(p.specs)) {
       if (typeof v !== "string")
         errors.push(`${where}: spec "${k}" must be a string`);
-      if (typeof v === "string" && v.includes(","))
+      if (typeof v === "string" && v.includes(",") && filterable.has(k))
         errors.push(
-          `${where}: spec "${k}" value contains a comma, which breaks URL filter encoding`,
+          `${where}: filterable spec "${k}" value contains a comma, which breaks URL filter encoding`,
         );
     }
   }
@@ -92,24 +106,35 @@ for (const [i, p] of products.entries()) {
 }
 
 // Every filterable spec dimension should have at least two distinct values,
-// otherwise the filter renders a single useless option.
-const filterableSpecs = read("data/filterable-specs.json");
-for (const [catId, keys] of Object.entries(filterableSpecs)) {
-  if (!catById.has(catId))
+// otherwise the filter renders a single useless option. Scopes are keyed either
+// "category" or "category/subcategory".
+for (const [scope, keys] of Object.entries(filterableSpecs)) {
+  const [catId, subId] = scope.split("/");
+  const cat = catById.get(catId);
+  if (!cat) {
     errors.push(`filterable-specs.json: unknown category "${catId}"`);
-  const scoped = products.filter((p) => p.category === catId);
+    continue;
+  }
+  if (subId && !cat.subcategories.some((s) => s.id === subId)) {
+    errors.push(`filterable-specs.json: unknown subcategory "${scope}"`);
+    continue;
+  }
+
+  const scoped = products.filter(
+    (p) => p.category === catId && (!subId || p.subcategory === subId),
+  );
   for (const key of keys) {
     const values = new Set(scoped.map((p) => p.specs?.[key]).filter(Boolean));
     if (values.size === 0)
-      errors.push(`FILTERABLE_SPECS.${catId}: no product carries spec "${key}"`);
+      errors.push(`FILTERABLE_SPECS[${scope}]: no product carries spec "${key}"`);
     else if (values.size === 1)
       warnings.push(
-        `FILTERABLE_SPECS.${catId}: spec "${key}" has only one value ("${[...values][0]}") — filter will be trivial`,
+        `FILTERABLE_SPECS[${scope}]: spec "${key}" has only one value ("${[...values][0]}") — filter will be trivial`,
       );
     const missing = scoped.filter((p) => !p.specs?.[key]).map((p) => p.id);
     if (missing.length)
       warnings.push(
-        `FILTERABLE_SPECS.${catId}: spec "${key}" missing on ${missing.join(", ")}`,
+        `FILTERABLE_SPECS[${scope}]: spec "${key}" missing on ${missing.join(", ")}`,
       );
   }
 }
