@@ -8,12 +8,14 @@
     "start": "next start",
     "lint": "eslint",
     "validate:data": "node scripts/validate-data.mjs",
-    "import:feed": "node scripts/import-xml-feed.mjs"
+    "import:feed": "node scripts/import-xml-feed.mjs",
+    "scrape": "node scripts/scrape-alta.mjs"
   },
   "dependencies": {
     "@fontsource/firago": "^5.3.0",
     "@fontsource/noto-sans-georgian": "^5.3.0",
     "@fontsource/ubuntu": "^5.3.0",
+    "cheerio": "^1.2.0",
     "fast-xml-parser": "^5.10.1",
     "next": "16.3.0",
     "react": "19.2.8",

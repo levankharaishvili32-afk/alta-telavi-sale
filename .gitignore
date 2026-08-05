@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# scraper cache — raw alta.ge responses, re-fetchable with `npm run scrape`
+/.cache/
