@@ -11,8 +11,18 @@ import {
 } from "@/lib/catalog";
 import { discountPercent, formatPrice, savings } from "@/lib/format";
 import ProductCard from "@/components/ProductCard";
-import AltaIcon, { type IconName } from "@/components/AltaIcon";
+import AltaIcon from "@/components/AltaIcon";
 import SpecTable from "@/components/SpecTable";
+
+/**
+ * The Telavi branch on Google Maps. Built with the documented Maps URLs API
+ * (`/maps/search/?api=1`) rather than the share.google short link the branch
+ * page hands out: the short form redirects through Google Search and can be
+ * retired, while this one is a stable contract and opens the Maps app directly
+ * on phones. Resolved to "Alta - Telavi Mall" at 41.9271, 45.4721.
+ */
+const TELAVI_BRANCH_MAP =
+  "https://www.google.com/maps/search/?api=1&query=Alta+-+Telavi+Mall";
 
 type PageProps = {
   params: Promise<{ id: string }>;
@@ -62,15 +72,6 @@ export default async function ProductPage({ params, searchParams }: PageProps) {
   const photos = [product.image, ...(product.gallery ?? [])].filter(
     (src, i, all) => src && all.indexOf(src) === i,
   );
-
-  const benefits: { icon: IconName; text: string }[] = [
-    { icon: "delivery", text: "უფასო მიწოდება თელავში შეკვეთიდან 24 საათში" },
-    { icon: "cart", text: "განვადება 0%-იანი პირველადი შენატანით" },
-    {
-      icon: "warranty",
-      text: `ოფიციალური გარანტია ${product.specs["გარანტია"] ?? "მწარმოებლის პირობებით"}`,
-    },
-  ];
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
@@ -162,65 +163,33 @@ export default async function ProductPage({ params, searchParams }: PageProps) {
             )}
           </div>
 
-          <div className="mt-5 flex items-center gap-2 text-sm">
-            <span
-              className={`size-2.5 rounded-full ${
-                product.stock ? "bg-alta-teal" : "bg-alta-300"
-              }`}
-              aria-hidden
-            />
-            <span
-              className={
-                product.stock
-                  ? "font-semibold text-alta-purple"
-                  : "font-semibold text-alta-400"
-              }
-            >
-              {product.stock ? "მარაგშია — თელავის ფილიალი" : "მარაგში არ არის"}
-            </span>
-          </div>
-
-          <div className="mt-6 flex flex-wrap gap-3">
-            {product.url ? (
-              /* Out-of-stock items still link out — the shop page is where
-                 restock and full specs live. */
-              <a
-                href={product.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={
-                  product.stock
-                    ? "alta-corners bg-alta-purple px-7 py-3.5 text-sm font-bold text-white transition hover:bg-alta-700"
-                    : "alta-corners border border-alta-200 bg-white px-7 py-3.5 text-sm font-bold text-alta-purple-deep transition hover:bg-alta-50"
-                }
-              >
-                {product.stock ? "შეძენა alta.ge-ზე" : "ნახეთ alta.ge-ზე"}
-              </a>
-            ) : (
-              <button
-                type="button"
-                disabled
-                className="alta-corners bg-alta-200 px-7 py-3.5 text-sm font-bold text-alta-400"
-              >
-                მიუწვდომელია
-              </button>
-            )}
+          <div className="mt-7">
             <a
-              href="tel:+995322380038"
-              className="alta-corners border border-alta-200 bg-white px-7 py-3.5 text-sm font-bold text-alta-purple-deep transition hover:bg-alta-50"
+              href={TELAVI_BRANCH_MAP}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="alta-corners inline-flex items-center gap-2.5 bg-alta-purple px-7 py-3.5 text-sm font-bold text-white transition hover:bg-alta-700"
             >
-              დარეკეთ შესაკვეთად
+              <svg viewBox="0 0 24 24" aria-hidden className="size-5">
+                <path
+                  d="M12 21s7-5.4 7-11a7 7 0 1 0-14 0c0 5.6 7 11 7 11Z"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.9"
+                  strokeLinejoin="round"
+                />
+                <circle
+                  cx="12"
+                  cy="10"
+                  r="2.5"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.9"
+                />
+              </svg>
+              თელავის ფილიალი
             </a>
           </div>
-
-          <ul className="mt-7 space-y-3">
-            {benefits.map((b) => (
-              <li key={b.text} className="flex items-center gap-3">
-                <AltaIcon name={b.icon} size="sm" />
-                <span className="text-sm text-alta-700">{b.text}</span>
-              </li>
-            ))}
-          </ul>
         </div>
       </div>
 
