@@ -21,14 +21,16 @@ export default function ProductGallery({
   return (
     <div>
       <div className="alta-corners-xl relative overflow-hidden border border-alta-100 bg-white">
-        <div className="relative aspect-4/3">
+        {/* Square frame with a 10% safe margin, per the brand reference:
+            the product never touches the edge of the tile. */}
+        <div className="relative aspect-square">
           <ProductImage
             key={current}
             src={current}
             alt={alt}
             priority
             sizes="(max-width: 1024px) 100vw, 50vw"
-            className="object-contain p-8"
+            className="object-contain p-[10%]"
           />
         </div>
       </div>

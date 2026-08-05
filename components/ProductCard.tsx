@@ -16,12 +16,12 @@ export default function ProductCard({
 
   return (
     <article className="alta-corners group relative flex flex-col overflow-hidden border border-alta-100 bg-white transition hover:border-alta-300 hover:shadow-[0_12px_32px_-12px_rgb(61_41_86_/_0.28)]">
-      <div className="relative aspect-4/3 overflow-hidden bg-alta-50">
+      <div className="relative aspect-square overflow-hidden bg-white">
         <ProductImage
           src={product.image}
           alt={product.title}
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-          className="object-contain p-3 transition duration-300 group-hover:scale-[1.04]"
+          className="object-contain p-[10%] transition duration-300 group-hover:scale-[1.04]"
         />
 
         {discount > 0 && (
