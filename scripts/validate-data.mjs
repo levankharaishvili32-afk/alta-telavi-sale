@@ -139,6 +139,60 @@ for (const [scope, keys] of Object.entries(filterableSpecs)) {
   }
 }
 
+/*
+ * Banners. The images are hand-dropped into public/banners/ and the entries
+ * hand-written, so check the two things that silently break: a missing file
+ * (Next throws at build time, but only for the slide it happens to render),
+ * and an href pointing at a filter combination that matches nothing — a
+ * shopper clicking a "60% off coffee machines" banner and landing on
+ * "შედეგი ვერ მოიძებნა" is worse than a banner that doesn't link at all.
+ */
+const banners = read("data/banners.json");
+for (const [i, b] of banners.entries()) {
+  const where = `banners[${i}] (${b.id ?? "no id"})`;
+  if (!b.id) errors.push(`${where}: missing "id"`);
+  if (!b.alt) errors.push(`${where}: missing "alt" — banners carry the offer`);
+
+  for (const crop of ["desktop", "mobile"]) {
+    const image = b[crop];
+    if (!image?.src) {
+      errors.push(`${where}: missing "${crop}.src"`);
+      continue;
+    }
+    const file = resolve(root, "public", image.src.replace(/^\//, ""));
+    if (!existsSync(file)) {
+      errors.push(`${where}: ${crop} image not found at public${image.src}`);
+      continue;
+    }
+    if (!image.width || !image.height)
+      errors.push(`${where}: ${crop} needs width and height to reserve its slot`);
+  }
+
+  if (!b.href) continue;
+  const query = new URLSearchParams(b.href.split("?")[1]?.split("#")[0] ?? "");
+  const cat = query.get("cat");
+  const subs = (query.get("sub") ?? "").split(",").filter(Boolean);
+  if (cat && !catById.has(cat)) {
+    errors.push(`${where}: href points at unknown category "${cat}"`);
+    continue;
+  }
+  for (const sub of subs) {
+    if (!catById.get(cat)?.subcategories.some((s) => s.id === sub))
+      errors.push(`${where}: href points at unknown subcategory "${sub}"`);
+  }
+  const matches = products.filter(
+    (p) =>
+      (!cat || p.category === cat) &&
+      (!subs.length || subs.includes(p.subcategory)),
+  );
+  if (matches.length === 0)
+    errors.push(`${where}: href "${b.href}" matches no products`);
+  else if (matches.length < 3)
+    warnings.push(
+      `${where}: href "${b.href}" matches only ${matches.length} product(s)`,
+    );
+}
+
 for (const w of warnings) console.warn(`warn  ${w}`);
 for (const e of errors) console.error(`error ${e}`);
 

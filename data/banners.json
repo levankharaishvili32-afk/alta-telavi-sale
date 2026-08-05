@@ -1,30 +1,32 @@
 [
   {
-    "id": "galaxy-watch-ultra2",
-    "alt": "Samsung Galaxy Watch Ultra2 — უკვე გაყიდვაში",
+    "id": "coffee",
+    "alt": "ყავის აპარატები — 60%-მდე ფასდაკლება",
     "desktop": {
-      "src": "/banners/galaxy-watch-ultra2-desktop.jpg",
+      "src": "/banners/coffee-desktop.jpg",
       "width": 1458,
       "height": 453
     },
     "mobile": {
-      "src": "/banners/galaxy-watch-ultra2-mobile.jpg",
+      "src": "/banners/coffee-mobile.jpg",
       "width": 1088,
       "height": 443
-    }
+    },
+    "href": "/?cat=home&sub=coffee-maker,coffee-press#catalog"
   },
   {
-    "id": "galaxy-watch9",
-    "alt": "Samsung Galaxy Watch9 — უკვე გაყიდვაში",
+    "id": "kitchen-small",
+    "alt": "სამზარეულოს წვრილი ტექნიკა — 60%-მდე ფასდაკლება",
     "desktop": {
-      "src": "/banners/galaxy-watch9-desktop.jpg",
+      "src": "/banners/kitchen-small-desktop.jpg",
       "width": 1458,
       "height": 453
     },
     "mobile": {
-      "src": "/banners/galaxy-watch9-mobile.jpg",
+      "src": "/banners/kitchen-small-mobile.jpg",
       "width": 1088,
       "height": 443
-    }
+    },
+    "href": "/?cat=home&sub=kettle,toaster,meat-machine,chopper#catalog"
   }
 ]
