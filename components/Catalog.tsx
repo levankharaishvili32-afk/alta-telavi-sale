@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { products } from "@/lib/catalog";
+import { discountPercent } from "@/lib/format";
 import {
   applyFilters,
   buildSearchParams,
@@ -123,8 +124,33 @@ export default function Catalog() {
 
   const results = useMemo(() => applyFilters(products, filters), [filters]);
   const facets = useMemo(() => computeFacets(products, filters), [filters]);
+  const maxDiscount = useMemo(
+    () =>
+      Math.max(
+        ...products.map((p) => discountPercent(p.old_price, p.promo_price)),
+      ),
+    [],
+  );
   const activeCount = activeFilterCount(filters);
   const shareQuery = canonical ? `?${canonical}` : "";
+
+  /* --- incremental rendering ---------------------------------------
+   * The unfiltered catalog is a few hundred products. Painting every card at
+   * once asks the browser for that many CDN images in one burst; past the
+   * per-host connection limit the tail of them time out, and a timed-out
+   * product photo is indistinguishable from a dead one — the card silently
+   * shows the placeholder. Rendering a page at a time keeps the burst small.
+   */
+  const PAGE = 36;
+  const [shown, setShown] = useState(PAGE);
+  // Reset to the first page whenever the result set itself changes, during
+  // render rather than in an effect so no over-long list is ever painted.
+  const [shownFor, setShownFor] = useState(canonical);
+  if (shownFor !== canonical) {
+    setShownFor(canonical);
+    setShown(PAGE);
+  }
+  const visible = results.slice(0, shown);
 
   const renderPanel = (showHeading: boolean) => (
     <FilterPanel
@@ -139,8 +165,21 @@ export default function Catalog() {
   return (
     <section
       id="catalog"
-      className="mx-auto max-w-7xl scroll-mt-20 px-4 py-10 sm:px-6 lg:px-8"
+      className="mx-auto max-w-7xl scroll-mt-20 px-4 pb-10 pt-2 sm:px-6 lg:px-8"
     >
+      {/* The page's only h1. Kept to one plain line rather than a banner block:
+          every document needs a top-level heading for screen readers and for
+          search results, and this is the page's actual subject. */}
+      <header className="mb-6 border-b border-alta-100 pb-5">
+        <h1 className="text-2xl font-bold text-alta-purple-deep sm:text-3xl">
+          თელავის დიდი ფასდაკლება
+        </h1>
+        <p className="mt-1.5 text-sm text-alta-700">
+          {products.length} პროდუქტი {maxDiscount}%-მდე ფასდაკლებით — მარაგის
+          ამოწურვამდე.
+        </p>
+      </header>
+
       <div className="lg:grid lg:grid-cols-[280px_minmax(0,1fr)] lg:gap-8">
         {/* Desktop sidebar */}
         <aside className="hidden lg:block">
@@ -249,11 +288,29 @@ export default function Catalog() {
 
           {/* Grid */}
           {results.length > 0 ? (
-            <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
-              {results.map((p) => (
-                <ProductCard key={p.id} product={p} query={shareQuery} />
-              ))}
-            </div>
+            <>
+              <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
+                {visible.map((p) => (
+                  <ProductCard key={p.id} product={p} query={shareQuery} />
+                ))}
+              </div>
+
+              {shown < results.length && (
+                <div className="mt-8 flex flex-col items-center gap-3">
+                  <p className="text-sm text-alta-400">
+                    ნაჩვენებია {visible.length} / {results.length}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setShown((n) => n + PAGE)}
+                    className="alta-corners bg-alta-purple px-6 py-3 text-sm font-bold text-white transition hover:bg-alta-700"
+                  >
+                    კიდევ {Math.min(PAGE, results.length - shown)} პროდუქტის
+                    ჩვენება
+                  </button>
+                </div>
+              )}
+            </>
           ) : (
             <div className="alta-corners mt-10 border-2 border-dashed border-alta-200 bg-alta-50 px-6 py-16 text-center">
               <p className="text-base font-bold text-alta-purple-deep">

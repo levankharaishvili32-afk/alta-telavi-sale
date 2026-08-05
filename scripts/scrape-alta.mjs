@@ -104,6 +104,17 @@ function parseArgs(argv) {
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
+/**
+ * alta.ge's own data is hand-entered, so titles and spec labels arrive with
+ * trailing spaces, doubled spaces, tabs and non-breaking spaces. Left alone
+ * these produce near-duplicate facet keys ("ვიდეო გარჩევადობა" and
+ * "ვიდეო გარჩევადობა ") that render as two separate filters.
+ */
+function clean(value) {
+  if (typeof value !== "string") return value;
+  return value.replace(/[\s ]+/g, " ").trim();
+}
+
 /** 300–500ms between requests, as a courtesy to the origin. */
 const politeDelay = () => sleep(300 + Math.floor(Math.random() * 200));
 
@@ -211,38 +222,46 @@ function fromNextData(html) {
   if (!product || !product.name) return null;
 
   const specs = {};
+  const addSpec = (name, meaning) => {
+    const key = clean(name);
+    const value = clean(meaning == null ? "" : String(meaning));
+    if (!key || !value) return;
+    // Trimming can collapse two variants of the same label onto one key; the
+    // first (specification-group order) wins.
+    specs[key] ??= value;
+  };
   for (const group of product.specificationGroup ?? []) {
     for (const spec of group.specifications ?? []) {
-      if (spec.specificationName && spec.specificationMeaning != null) {
-        specs[spec.specificationName] = String(spec.specificationMeaning);
-      }
+      addSpec(spec.specificationName, spec.specificationMeaning);
     }
   }
   for (const spec of product.mainSpecification ?? []) {
-    if (spec.specificationName && spec.specificationMeaning != null) {
-      specs[spec.specificationName] ??= String(spec.specificationMeaning);
-    }
+    addSpec(spec.specificationName, spec.specificationMeaning);
   }
 
   return {
     source: "__NEXT_DATA__",
     pid: product.id ?? null,
     barCode: product.barCode != null ? String(product.barCode) : null,
-    title: product.name,
-    brand: product.brandName || specs["ბრენდი"] || null,
+    title: clean(product.name),
+    brand: clean(product.brandName) || specs["ბრენდი"] || null,
     description:
-      typeof product.description === "string" && product.description.trim()
-        ? product.description.trim()
+      typeof product.description === "string" && clean(product.description)
+        ? clean(product.description)
         : null,
     images: (product.images?.length ? product.images : [product.imageUrl]).filter(Boolean),
-    breadcrumbs: (product.breadcrumbs ?? []).map((b) => b.name).filter(Boolean),
-    categoryName: product.categoryName ?? null,
-    parentCategoryName: product.parentCategoryName ?? null,
+    breadcrumbs: (product.breadcrumbs ?? [])
+      .map((b) => clean(b.name))
+      .filter(Boolean),
+    categoryName: clean(product.categoryName) || null,
+    parentCategoryName: clean(product.parentCategoryName) || null,
     stock: Number(product.storageQuantity ?? 0) > 0,
     specs,
     specGroups: (product.specificationGroup ?? []).map((g) => ({
-      group: g.groupName,
-      keys: (g.specifications ?? []).map((s) => s.specificationName).filter(Boolean),
+      group: clean(g.groupName),
+      keys: (g.specifications ?? [])
+        .map((s) => clean(s.specificationName))
+        .filter(Boolean),
     })),
   };
 }
@@ -381,12 +400,35 @@ async function fetchPage(id, route, flags) {
   return { html: res.text };
 }
 
+/**
+ * Whitespace tidying applied on the way *out* of the cache as well as on the
+ * way in, so a cache written before this rule existed still yields clean data
+ * without forcing a full --refresh.
+ */
+function tidyRecord(record) {
+  const specs = {};
+  for (const [key, value] of Object.entries(record.specs ?? {})) {
+    const k = clean(key);
+    const v = clean(String(value ?? ""));
+    if (k && v) specs[k] ??= v;
+  }
+  return {
+    ...record,
+    title: clean(record.title),
+    brand: clean(record.brand) || null,
+    description: clean(record.description) || null,
+    breadcrumbs: (record.breadcrumbs ?? []).map(clean).filter(Boolean),
+    categoryName: clean(record.categoryName) || null,
+    specs,
+  };
+}
+
 /** Full record for one CSV id. Cached end-to-end in .cache/products/<id>.json. */
 async function scrapeOne(id, flags) {
   const recordFile = path.join(CACHE, "products", `${id}.json`);
   if (!flags.refresh) {
     const cached = await readJson(recordFile);
-    if (cached) return { ...cached, cached: true };
+    if (cached) return { ...tidyRecord(cached), cached: true };
   }
 
   const resolved = await resolveRoute(id, flags);
@@ -601,6 +643,12 @@ async function writeReport({ rows, results, flags, started }) {
 
   const titleOf = (id) => rows.find((r) => r.id === id)?.title ?? "";
 
+  // The CSV flags rows whose two price columns disagreed with its own source.
+  // The prices are still used verbatim — the flag is surfaced, not acted on.
+  const conflicts = rows.filter(
+    (r) => String(r.price_conflict).toLowerCase() === "true",
+  );
+
   const md = `# alta.ge სქრეიპის ანგარიში
 
 დაწყება: ${started}
@@ -614,6 +662,7 @@ async function writeReport({ rows, results, flags, started }) {
 | ვერ მოიძებნა alta.ge-ზე | ${notFound.length} |
 | შეცდომით დასრულდა | ${failed.length} |
 | ფოტოს გარეშე | ${noImages.length} |
+| CSV-ში ფასის კონფლიქტით მონიშნული | ${conflicts.length} |
 
 ## ვერ მოიძებნა alta.ge-ზე (${notFound.length})
 
@@ -642,6 +691,18 @@ ${table(
 ${table(
   imageFailures.map((r) => `| ${r.id} | ${r.imageFailures.length} | ${r.imageFailures[0]} |`),
   ["კოდი", "ვერ ჩამოიტვირთა", "პირველი URL"],
+)}
+## CSV-ში ფასის კონფლიქტით მონიშნული (${conflicts.length})
+
+ამ სტრიქონებს თავად CSV-ს სვეტი \`price_conflict\` ნიშნავს. ფასები მაინც CSV-დან
+აიღება უცვლელად — სია მხოლოდ იმისთვისაა, რომ ხელით გადაამოწმო.
+
+${table(
+  conflicts.map(
+    (r) =>
+      `| ${r.id} | ${r.title.replace(/\|/g, "/")} | ${r.old_price} | ${r.promo_price} |`,
+  ),
+  ["კოდი", "დასახელება", "ძველი ფასი", "აქციის ფასი"],
 )}
 ---
 

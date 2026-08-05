@@ -12,6 +12,7 @@ import {
 import { discountPercent, formatPrice, savings } from "@/lib/format";
 import ProductCard from "@/components/ProductCard";
 import AltaIcon, { type IconName } from "@/components/AltaIcon";
+import SpecTable from "@/components/SpecTable";
 
 type PageProps = {
   params: Promise<{ id: string }>;
@@ -228,23 +229,7 @@ export default async function ProductPage({ params, searchParams }: PageProps) {
         <h2 className="text-lg font-bold text-alta-purple-deep">
           მახასიათებლები
         </h2>
-        <div className="alta-corners-xl mt-4 overflow-hidden border border-alta-100 bg-white">
-          <dl>
-            {Object.entries(product.specs).map(([key, value], i) => (
-              <div
-                key={key}
-                className={`grid grid-cols-1 gap-1 px-6 py-4 sm:grid-cols-[minmax(0,240px)_minmax(0,1fr)] sm:gap-4 ${
-                  i % 2 ? "bg-alta-50" : "bg-white"
-                }`}
-              >
-                <dt className="text-sm font-medium text-alta-400">{key}</dt>
-                <dd className="text-sm font-semibold text-alta-purple-deep">
-                  {value}
-                </dd>
-              </div>
-            ))}
-          </dl>
-        </div>
+        <SpecTable specs={product.specs} />
       </section>
 
       {/* Related */}

@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import Hero from "@/components/Hero";
+import BannerSlider from "@/components/BannerSlider";
 import Catalog from "@/components/Catalog";
 
 function CatalogSkeleton() {
@@ -23,7 +23,7 @@ function CatalogSkeleton() {
 export default function HomePage() {
   return (
     <>
-      <Hero />
+      <BannerSlider />
       <Suspense fallback={<CatalogSkeleton />}>
         <Catalog />
       </Suspense>

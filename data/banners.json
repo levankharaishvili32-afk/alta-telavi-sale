@@ -1,0 +1,30 @@
+[
+  {
+    "id": "galaxy-watch-ultra2",
+    "alt": "Samsung Galaxy Watch Ultra2 — უკვე გაყიდვაში",
+    "desktop": {
+      "src": "/banners/galaxy-watch-ultra2-desktop.jpg",
+      "width": 1458,
+      "height": 453
+    },
+    "mobile": {
+      "src": "/banners/galaxy-watch-ultra2-mobile.jpg",
+      "width": 1088,
+      "height": 443
+    }
+  },
+  {
+    "id": "galaxy-watch9",
+    "alt": "Samsung Galaxy Watch9 — უკვე გაყიდვაში",
+    "desktop": {
+      "src": "/banners/galaxy-watch9-desktop.jpg",
+      "width": 1458,
+      "height": 453
+    },
+    "mobile": {
+      "src": "/banners/galaxy-watch9-mobile.jpg",
+      "width": 1088,
+      "height": 443
+    }
+  }
+]
