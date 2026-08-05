@@ -3,13 +3,12 @@ import { discountPercent } from "./format";
 import { specKeysForCategory } from "./catalog";
 
 export const SORTS = [
-  { value: "discount-desc", label: "ფასდაკლებით" },
-  { value: "price-asc", label: "ჯერ იაფი" },
-  { value: "price-desc", label: "ჯერ ძვირი" },
+  { value: "price-desc", label: "ფასი: კლებადობით" },
+  { value: "price-asc", label: "ფასი: ზრდადობით" },
 ] as const;
 
 export type Sort = (typeof SORTS)[number]["value"];
-export const DEFAULT_SORT: Sort = "discount-desc";
+export const DEFAULT_SORT: Sort = "price-desc";
 
 export type Filters = {
   q: string;
@@ -173,12 +172,17 @@ function applyPredicates(
 }
 
 const comparators: Record<Sort, (a: Product, b: Product) => number> = {
-  "price-asc": (a, b) => a.promo_price - b.promo_price,
-  "price-desc": (a, b) => b.promo_price - a.promo_price,
-  "discount-desc": (a, b) =>
+  // Ties break by discount, so equally-priced products still lead with the
+  // better offer instead of falling back to whatever order the file happens
+  // to be in.
+  "price-asc": (a, b) =>
+    a.promo_price - b.promo_price ||
     discountPercent(b.old_price, b.promo_price) -
-      discountPercent(a.old_price, a.promo_price) ||
-    a.promo_price - b.promo_price,
+      discountPercent(a.old_price, a.promo_price),
+  "price-desc": (a, b) =>
+    b.promo_price - a.promo_price ||
+    discountPercent(b.old_price, b.promo_price) -
+      discountPercent(a.old_price, a.promo_price),
 };
 
 export function sortProducts(items: Product[], sort: Sort): Product[] {
