@@ -21,8 +21,9 @@ export default function ProductGallery({
   return (
     <div>
       <div className="alta-corners-xl relative overflow-hidden border border-alta-100 bg-white">
-        {/* Square frame with a 10% safe margin, per the brand reference:
-            the product never touches the edge of the tile. */}
+        {/* Square white tile, source shown edge to edge. The feed's photos are
+            already square canvases with the product inset — adding padding here
+            would shrink the product twice over. */}
         <div className="relative aspect-square">
           <ProductImage
             key={current}
@@ -30,7 +31,7 @@ export default function ProductGallery({
             alt={alt}
             priority
             sizes="(max-width: 1024px) 100vw, 50vw"
-            className="object-contain p-[10%]"
+            className="object-contain"
           />
         </div>
       </div>

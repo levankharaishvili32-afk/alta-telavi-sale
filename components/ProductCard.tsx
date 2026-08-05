@@ -21,7 +21,7 @@ export default function ProductCard({
           src={product.image}
           alt={product.title}
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-          className="object-contain p-[10%] transition duration-300 group-hover:scale-[1.04]"
+          className="object-contain transition duration-300 group-hover:scale-[1.04]"
         />
 
         {discount > 0 && (
