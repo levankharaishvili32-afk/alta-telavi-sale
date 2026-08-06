@@ -2,6 +2,7 @@
   "name": "telavi-sale",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -12,7 +13,8 @@
     "scrape": "node scripts/scrape-alta.mjs",
     "bundles": "node scripts/build-bundles.mjs",
     "specs": "node scripts/normalize-specs.mjs",
-    "comparisons": "node scripts/build-comparisons.mjs"
+    "comparisons": "node scripts/build-comparisons.mjs",
+    "search-index": "node scripts/build-search-index.mjs"
   },
   "dependencies": {
     "@fontsource/firago": "^5.3.0",
@@ -20,6 +22,7 @@
     "@fontsource/ubuntu": "^5.3.0",
     "cheerio": "^1.2.0",
     "fast-xml-parser": "^5.10.1",
+    "fuse.js": "^7.5.0",
     "next": "16.3.0",
     "react": "19.2.8",
     "react-dom": "19.2.8"

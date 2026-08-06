@@ -2,6 +2,7 @@ import categoriesJson from "@/data/categories.json";
 import productsJson from "@/data/products.json";
 import filterableSpecsJson from "@/data/filterable-specs.json";
 import type { Category, Product } from "./types";
+import { discountPercent } from "./format";
 
 // JSON module inference widens each object's `specs` into a distinct literal
 // type, so the cast goes through `unknown`. The shape is validated by
@@ -106,6 +107,25 @@ export function subcategoryLabel(categoryId: string, subId: string): string {
 
 export function getProduct(id: string): Product | undefined {
   return products.find((p) => p.id === id);
+}
+
+/**
+ * The deepest discounts in the catalog.
+ *
+ * Used wherever a search comes back empty. A blank "nothing found" is a dead
+ * end; the four best offers on the site are at least a reason to keep looking,
+ * and on a discount campaign they are the most likely thing to interest
+ * somebody whose exact search missed.
+ */
+export function deepestDiscounts(limit = 4): Product[] {
+  return [...products]
+    .sort(
+      (a, b) =>
+        discountPercent(b.old_price, b.promo_price) -
+          discountPercent(a.old_price, a.promo_price) ||
+        b.old_price - b.promo_price - (a.old_price - a.promo_price),
+    )
+    .slice(0, limit);
 }
 
 export function relatedProducts(product: Product, limit = 4): Product[] {

@@ -193,6 +193,31 @@ for (const [i, b] of banners.entries()) {
     );
 }
 
+/*
+ * The search index is derived from products.json, so it goes stale silently:
+ * search keeps working, it just stops knowing about the products that changed.
+ * Nothing in the app can notice that at runtime, which is why it is checked
+ * here — the fix is always `npm run search-index`.
+ */
+if (existsSync(resolve(root, "data/search-index.json"))) {
+  const index = read("data/search-index.json");
+  const indexed = new Map(index.entries.map((e) => [e.id, e]));
+  const missing = products.filter((p) => !indexed.has(p.id));
+  const orphaned = index.entries.filter(
+    (e) => !products.some((p) => p.id === e.id),
+  );
+  const renamed = products.filter((p) => indexed.get(p.id)?.title !== p.title);
+
+  if (missing.length || orphaned.length || renamed.length)
+    errors.push(
+      `data/search-index.json is stale (${missing.length} missing, ` +
+        `${orphaned.length} removed, ${renamed.length} retitled) — ` +
+        `run: npm run search-index`,
+    );
+} else {
+  errors.push("data/search-index.json is missing — run: npm run search-index");
+}
+
 for (const w of warnings) console.warn(`warn  ${w}`);
 for (const e of errors) console.error(`error ${e}`);
 

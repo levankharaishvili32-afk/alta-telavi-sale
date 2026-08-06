@@ -3,14 +3,20 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import ProductImage from "./ProductImage";
-import { products } from "@/lib/catalog";
+import Highlight from "./Highlight";
+import { deepestDiscounts, products } from "@/lib/catalog";
 import { compareHref, scopeLabel, scopeOf } from "@/lib/compare";
 import { suggestionsFor, type Suggestion } from "@/lib/comparisons";
 import { discountPercent, formatPrice } from "@/lib/format";
+import { rangesFor, searchIn, searchProducts, type Range } from "@/lib/search";
+import { installSearchQueriesHelper, recordSearch } from "@/lib/search-log";
 import type { Product } from "@/lib/types";
 
 const DEBOUNCE_MS = 200;
 const MAX_RESULTS = 8;
+
+/** Same zero-result answer as the catalog: the site's four best offers. */
+const FALLBACK_PRODUCTS = deepestDiscounts(4);
 
 /**
  * "ვის შევადაროთ?" — the picker that opens when someone asks to compare with
@@ -43,6 +49,7 @@ export default function ComparePicker({
   }, [query]);
 
   useEffect(() => {
+    installSearchQueriesHelper();
     inputRef.current?.focus();
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -56,22 +63,25 @@ export default function ComparePicker({
     };
   }, [onClose]);
 
+  /*
+   * The same `searchProducts` the catalog field uses — transliteration,
+   * aliases, typo tolerance and the product-code shortcut all included. Here a
+   * code match is not navigated to but shown as the one result, because in
+   * this modal the shopper is choosing a second product, not going somewhere.
+   */
+  const outcome = useMemo(() => searchProducts(debounced), [debounced]);
+
   const results = useMemo(() => {
-    const needle = debounced.trim().toLowerCase();
-    if (!needle) return [];
-    const pool = allCategories
-      ? products
-      : products.filter((p) => scopeOf(p) === scope);
-    return pool
-      .filter((p) => p.id !== selected.id)
-      .filter(
-        (p) =>
-          p.title.toLowerCase().includes(needle) ||
-          p.brand.toLowerCase().includes(needle) ||
-          p.id.includes(needle),
-      )
-      .slice(0, MAX_RESULTS);
-  }, [debounced, allCategories, scope, selected.id]);
+    if (outcome.kind === "empty") return [];
+    const pool = (
+      allCategories ? products : products.filter((p) => scopeOf(p) === scope)
+    ).filter((p) => p.id !== selected.id);
+    return searchIn(debounced, pool, MAX_RESULTS);
+  }, [outcome, debounced, allCategories, scope, selected.id]);
+
+  useEffect(() => {
+    if (outcome.kind === "text") recordSearch(debounced, outcome.hits.length);
+  }, [debounced, outcome]);
 
   const suggestions = useMemo(
     () => suggestionsFor(selected.id, [], 3),
@@ -169,18 +179,43 @@ export default function ComparePicker({
         <div className="max-h-[55vh] overflow-y-auto px-5 py-4">
           {searching ? (
             results.length > 0 ? (
-              <ul className="space-y-1.5">
-                {results.map((product) => (
-                  <li key={product.id}>
-                    <ResultRow product={product} onPick={pick} />
-                  </li>
-                ))}
-              </ul>
+              <>
+                <p className="mb-2.5 text-xs text-alta-400" aria-live="polite">
+                  ნაპოვნია {results.length} პროდუქტი
+                </p>
+                <ul className="space-y-1.5">
+                  {results.map((product) => (
+                    <li key={product.id}>
+                      <ResultRow
+                        product={product}
+                        highlight={rangesFor(outcome, product.id)}
+                        onPick={pick}
+                      />
+                    </li>
+                  ))}
+                </ul>
+              </>
             ) : (
-              <p className="py-8 text-center text-sm text-alta-700">
-                „{debounced}“ — შედეგი ვერ მოიძებნა
-                {allCategories ? "." : " ამ კატეგორიაში."}
-              </p>
+              /* Never a bare empty state — the same four best offers the
+                 catalog falls back to, minus anything already chosen. */
+              <div>
+                <p className="text-center text-sm text-alta-700">
+                  „{debounced}“ — ვერაფერი მოიძებნა
+                  {allCategories ? "." : " ამ კატეგორიაში."}
+                </p>
+                <h3 className="mt-6 text-sm font-bold text-alta-purple-deep">
+                  ყველაზე დიდი ფასდაკლებები
+                </h3>
+                <ul className="mt-2.5 space-y-1.5">
+                  {FALLBACK_PRODUCTS.filter((p) => p.id !== selected.id).map(
+                    (product) => (
+                      <li key={product.id}>
+                        <ResultRow product={product} onPick={pick} />
+                      </li>
+                    ),
+                  )}
+                </ul>
+              </div>
             )
           ) : (
             <Suggestions suggestions={suggestions} onPick={pick} />
@@ -272,9 +307,11 @@ function Suggestions({
 function ResultRow({
   product,
   onPick,
+  highlight,
 }: {
   product: Product;
   onPick: (id: string) => void;
+  highlight?: readonly Range[];
 }) {
   const discount = discountPercent(product.old_price, product.promo_price);
   return (
@@ -293,7 +330,7 @@ function ResultRow({
       </span>
       <span className="min-w-0 flex-1">
         <span className="block truncate text-sm font-semibold text-alta-purple-deep">
-          {product.title}
+          <Highlight text={product.title} ranges={highlight} />
         </span>
         <span className="block text-[11px] text-alta-400">
           {product.brand} · {product.id}

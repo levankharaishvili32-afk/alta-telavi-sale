@@ -1,17 +1,22 @@
 import Link from "next/link";
 import ProductImage from "./ProductImage";
 import CompareToggle from "./CompareToggle";
+import Highlight from "./Highlight";
 import type { Product } from "@/lib/types";
+import type { Range } from "@/lib/search";
 import { discountPercent, formatPrice } from "@/lib/format";
 import { categoryLabel, subcategoryLabel } from "@/lib/catalog";
 
 export default function ProductCard({
   product,
   query = "",
+  highlight,
 }: {
   product: Product;
   /** current filter query string, so "back" returns to the same view */
   query?: string;
+  /** parts of the title that matched the search, if this card came from one */
+  highlight?: readonly Range[];
 }) {
   const discount = discountPercent(product.old_price, product.promo_price);
 
@@ -58,7 +63,7 @@ export default function ProductCard({
             href={`/product/${product.id}${query}`}
             className="before:absolute before:inset-0 focus-visible:outline-none"
           >
-            {product.title}
+            <Highlight text={product.title} ranges={highlight} />
           </Link>
         </h3>
 

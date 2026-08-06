@@ -1,10 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { usePathname, useSearchParams } from "next/navigation";
-import { products } from "@/lib/catalog";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { deepestDiscounts, products } from "@/lib/catalog";
 import { discountPercent } from "@/lib/format";
 import { CAMPAIGN_END_INCLUSIVE } from "@/lib/campaign";
+import { rangesFor, searchProducts } from "@/lib/search";
+import { installSearchQueriesHelper, recordSearch } from "@/lib/search-log";
 import {
   applyFilters,
   buildSearchParams,
@@ -21,8 +23,15 @@ import ProductCard from "./ProductCard";
 import FilterPanel from "./FilterPanel";
 import ActiveChips from "./ActiveChips";
 
+/** The four best offers on the site, shown whenever a search finds nothing. */
+const FALLBACK_PRODUCTS = deepestDiscounts(4);
+
+/** Long enough not to search every keystroke, short enough to feel live. */
+const SEARCH_DEBOUNCE_MS = 200;
+
 export default function Catalog() {
   const pathname = usePathname();
+  const router = useRouter();
   const searchParams = useSearchParams();
 
   const urlKey = searchParams.toString();
@@ -100,12 +109,23 @@ export default function Catalog() {
     setQuery(filters.q);
   }
   useEffect(() => {
-    const t = setTimeout(
-      () => setFilters((prev) => (prev.q === query ? prev : { ...prev, q: query })),
-      250,
-    );
+    const t = setTimeout(() => {
+      /*
+       * A product code goes straight to the product. Branch staff and anyone
+       * holding a shelf label are not searching, they are addressing — and a
+       * ranked list they then have to click through is one step too many.
+       */
+      const outcome = searchProducts(query);
+      if (outcome.kind === "code" && outcome.codeId) {
+        router.push(`/product/${outcome.codeId}`);
+        return;
+      }
+      setFilters((prev) => (prev.q === query ? prev : { ...prev, q: query }));
+    }, SEARCH_DEBOUNCE_MS);
     return () => clearTimeout(t);
-  }, [query]);
+  }, [query, router]);
+
+  useEffect(() => installSearchQueriesHelper(), []);
 
   /* --- mobile drawer ------------------------------------------------ */
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -125,6 +145,21 @@ export default function Catalog() {
 
   const results = useMemo(() => applyFilters(products, filters), [filters]);
   const facets = useMemo(() => computeFacets(products, filters), [filters]);
+
+  // Held separately from `results` because it carries the match positions the
+  // cards highlight, which survive the other filters narrowing the list.
+  const outcome = useMemo(() => searchProducts(filters.q), [filters.q]);
+
+  /*
+   * Every search is written to localStorage, the ones that found nothing very
+   * much included — that list is what says which line to add to
+   * `data/search-aliases.json` next. The count logged is the search's own, not
+   * the filtered one, so a category filter hiding good results cannot make a
+   * working query look broken.
+   */
+  useEffect(() => {
+    if (outcome.kind === "text") recordSearch(filters.q, outcome.hits.length);
+  }, [filters.q, outcome]);
   /*
    * The advertised headline figure, which is not the computed one. The deepest
    * actual discount in the catalog is 77%, and the campaign advertises 80% —
@@ -228,8 +263,8 @@ export default function Catalog() {
                 type="search"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="ძებნა დასახელებით…"
-                aria-label="პროდუქტის ძებნა დასახელებით"
+                placeholder="ძებნა: სამსუნგი, samsung, ან კოდი…"
+                aria-label="პროდუქტის ძებნა დასახელებით, ბრენდით ან კოდით"
                 className="alta-corners w-full border border-alta-200 bg-white py-2.5 pl-9 pr-3 text-sm outline-none transition focus:border-alta-purple focus:ring-2 focus:ring-alta-100"
               />
             </div>
@@ -289,6 +324,11 @@ export default function Catalog() {
           {/* Result count */}
           <div className="mt-4 flex items-baseline gap-2 border-b border-alta-100 pb-3">
             <p className="text-sm text-alta-700" aria-live="polite">
+              {filters.q && (
+                <span className="font-semibold text-alta-purple-deep">
+                  „{filters.q}“{" "}
+                </span>
+              )}
               ნაპოვნია{" "}
               <span className="font-bold text-alta-purple">{results.length}</span>{" "}
               პროდუქტი
@@ -303,7 +343,12 @@ export default function Catalog() {
             <>
               <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
                 {visible.map((p) => (
-                  <ProductCard key={p.id} product={p} query={shareQuery} />
+                  <ProductCard
+                    key={p.id}
+                    product={p}
+                    query={shareQuery}
+                    highlight={rangesFor(outcome, p.id)}
+                  />
                 ))}
               </div>
 
@@ -324,20 +369,42 @@ export default function Catalog() {
               )}
             </>
           ) : (
-            <div className="alta-corners mt-10 border-2 border-dashed border-alta-200 bg-alta-50 px-6 py-16 text-center">
-              <p className="text-base font-bold text-alta-purple-deep">
-                შედეგი ვერ მოიძებნა
-              </p>
-              <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-alta-700">
-                სცადეთ ფილტრების შემსუბუქება ან სხვა საძიებო სიტყვა.
-              </p>
-              <button
-                type="button"
-                onClick={clearAll}
-                className="alta-corners mt-5 bg-alta-purple px-5 py-2.5 text-sm font-bold text-white transition hover:bg-alta-700"
-              >
-                ფილტრების გასუფთავება
-              </button>
+            /* Never a bare empty state: whatever was asked for, the four best
+               offers on the site are a better answer than a dead end. */
+            <div className="mt-10">
+              <div className="alta-corners border-2 border-dashed border-alta-200 bg-alta-50 px-6 py-12 text-center">
+                <p className="text-base font-bold text-alta-purple-deep">
+                  ვერაფერი მოიძებნა
+                </p>
+                <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-alta-700">
+                  {filters.q ? (
+                    <>
+                      „{filters.q}“ — სცადეთ სხვა სიტყვა, ბრენდის სახელი ან
+                      პროდუქტის კოდი.
+                    </>
+                  ) : (
+                    <>სცადეთ ფილტრების შემსუბუქება.</>
+                  )}
+                </p>
+                <button
+                  type="button"
+                  onClick={clearAll}
+                  className="alta-corners mt-5 bg-alta-purple px-5 py-2.5 text-sm font-bold text-white transition hover:bg-alta-700"
+                >
+                  ფილტრების გასუფთავება
+                </button>
+              </div>
+
+              <section className="mt-10">
+                <h2 className="text-base font-bold text-alta-purple-deep">
+                  ყველაზე დიდი ფასდაკლებები
+                </h2>
+                <div className="mt-4 grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
+                  {FALLBACK_PRODUCTS.map((p) => (
+                    <ProductCard key={p.id} product={p} />
+                  ))}
+                </div>
+              </section>
             </div>
           )}
         </div>

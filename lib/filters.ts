@@ -1,6 +1,7 @@
 import type { Product } from "./types";
 import { discountPercent } from "./format";
 import { specKeysForCategory } from "./catalog";
+import { searchIds } from "./search";
 
 export const SORTS = [
   { value: "price-desc", label: "ფასი: კლებადობით" },
@@ -129,8 +130,6 @@ export function filtersToQueryString(f: Filters): string {
 /* Matching                                                            */
 /* ------------------------------------------------------------------ */
 
-const normalize = (s: string) => s.toLocaleLowerCase("ka").trim();
-
 type Predicates = Record<string, (p: Product) => boolean>;
 
 /** One predicate per filter dimension, so facets can exclude their own. */
@@ -138,11 +137,14 @@ function buildPredicates(f: Filters): Predicates {
   const preds: Predicates = {};
 
   if (f.q) {
-    const needles = normalize(f.q).split(/\s+/).filter(Boolean);
-    preds.q = (p) => {
-      const haystack = normalize(`${p.title} ${p.brand}`);
-      return needles.every((n) => haystack.includes(n));
-    };
+    /*
+     * The text query is answered by `lib/search.ts`, not by substring matching
+     * here — it has to survive Georgian input, Latin input and typos. The call
+     * is memoized on the query, which matters because this function runs once
+     * for the results and once more per facet dimension.
+     */
+    const ids = searchIds(f.q);
+    preds.q = (p) => ids.has(p.id);
   }
   if (f.category) preds.category = (p) => p.category === f.category;
   if (f.subcategories.length)
