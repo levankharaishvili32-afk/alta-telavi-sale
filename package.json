@@ -9,7 +9,8 @@
     "lint": "eslint",
     "validate:data": "node scripts/validate-data.mjs",
     "import:feed": "node scripts/import-xml-feed.mjs",
-    "scrape": "node scripts/scrape-alta.mjs"
+    "scrape": "node scripts/scrape-alta.mjs",
+    "bundles": "node scripts/build-bundles.mjs"
   },
   "dependencies": {
     "@fontsource/firago": "^5.3.0",

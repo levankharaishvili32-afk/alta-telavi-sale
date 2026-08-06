@@ -13,6 +13,8 @@ import { discountPercent, formatPrice, savings } from "@/lib/format";
 import ProductCard from "@/components/ProductCard";
 import AltaIcon from "@/components/AltaIcon";
 import SpecTable from "@/components/SpecTable";
+import BundleBox from "@/components/BundleBox";
+import { bundleFor } from "@/lib/bundles";
 
 /**
  * The Telavi branch on Google Maps. Built with the documented Maps URLs API
@@ -72,6 +74,7 @@ export default async function ProductPage({ params, searchParams }: PageProps) {
   const photos = [product.image, ...(product.gallery ?? [])].filter(
     (src, i, all) => src && all.indexOf(src) === i,
   );
+  const bundle = bundleFor(product.id);
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
@@ -114,6 +117,20 @@ export default async function ProductPage({ params, searchParams }: PageProps) {
               −{discount}%
             </span>
           )}
+
+          {/* Sits directly under the gallery. Renders nothing when this
+              product has no qualifying accessories. */}
+          <BundleBox
+            main={{
+              id: product.id,
+              title: product.title,
+              image: product.image,
+              price: product.promo_price,
+              old_price: discount > 0 ? product.old_price : null,
+              brand: product.brand,
+            }}
+            items={bundle}
+          />
         </div>
 
         {/* Summary */}

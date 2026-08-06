@@ -1,0 +1,422 @@
+{
+  "_comment": [
+    "Two halves, both meant to be edited by hand.",
+    "",
+    "`accessoryTypes` defines WHAT an accessory type is, in terms alta.ge",
+    "actually uses. `slugs` are alta.ge category slugs (the first path segment",
+    "of a product URL, e.g. https://alta.ge/mobiluri-telefonis-aqsesuarebi/...).",
+    "One slug often holds several types — all 1456 phone accessories share",
+    "`mobiluri-telefonis-aqsesuarebi` — so `match` narrows it by title keyword",
+    "and `exclude` pushes back the overlaps (a screen protector is not a case).",
+    "Matching is case-insensitive and works on Georgian and Latin alike.",
+    "",
+    "`byCategory` maps a campaign product's own category to an ordered list of",
+    "those types. Order matters: the first type scores the full category point,",
+    "later ones score proportionally less. Keys are matched loosely against",
+    "both the CSV `category` column and the slug it becomes, so `NOTEBOOK`,",
+    "`notebook` and `Notebook` all hit the same rule.",
+    "",
+    "Add a type here and re-run `npm run bundles` — no code change needed.",
+    "",
+    "`requiresModelMatch: true` on a type means it only pairs with an accessory whose title names this exact model, or names no model at all (a universal fit). Set it on anything that physically has to fit one device — a case, a screen protector, a watch strap."
+  ],
+  "accessoryTypes": {
+    "case": {
+      "label": "ქეისი",
+      "slugs": [
+        "mobiluri-telefonis-aqsesuarebi",
+        "tabis-aqsesuarebi"
+      ],
+      "match": [
+        "case",
+        "cover",
+        "ქეისი",
+        "ბამპერი",
+        "ყდა",
+        "flip",
+        "folio",
+        "book",
+        "tpu",
+        "silicone"
+      ],
+      "exclude": [
+        "screen",
+        "glass",
+        "protector",
+        "დამცავი",
+        "tempered"
+      ],
+      "requiresModelMatch": true
+    },
+    "screen-protector": {
+      "label": "დამცავი მინა",
+      "slugs": [
+        "mobiluri-telefonis-aqsesuarebi",
+        "tabis-aqsesuarebi"
+      ],
+      "match": [
+        "screen protector",
+        "tempered",
+        "glass",
+        "დამცავი",
+        "მინა",
+        "protector"
+      ],
+      "exclude": [
+        "case",
+        "cover",
+        "ქეისი"
+      ],
+      "requiresModelMatch": true
+    },
+    "charger": {
+      "label": "დამტენი",
+      "slugs": [
+        "mobiluri-telefonis-aqsesuarebi",
+        "kvebis-tsyaroebi"
+      ],
+      "match": [
+        "charger",
+        "adapter",
+        "დამტენი",
+        "ადაპტერი",
+        "wall",
+        "gan",
+        "usb-c",
+        "type-c cable",
+        "cable"
+      ],
+      "exclude": [
+        "case",
+        "cover",
+        "glass",
+        "power bank"
+      ]
+    },
+    "power-bank": {
+      "label": "დამტენი ბატარეა",
+      "slugs": [
+        "mobiluri-telefonis-aqsesuarebi",
+        "kvebis-tsyaroebi",
+        "portatuli-eleqtro-sadgurebi"
+      ],
+      "match": [
+        "power bank",
+        "powerbank",
+        "პაუერბანკი",
+        "mah"
+      ],
+      "exclude": []
+    },
+    "headphones": {
+      "label": "ყურსასმენი",
+      "slugs": [
+        "buds",
+        "usadeno-yursasmenebi",
+        "kompiuteris-yursasmeni"
+      ],
+      "match": [],
+      "exclude": []
+    },
+    "notebook-bag": {
+      "label": "ნოუთბუქის ჩანთა",
+      "slugs": [
+        "noutbuqis-aqsesuarebi"
+      ],
+      "match": [
+        "bag",
+        "case",
+        "sleeve",
+        "backpack",
+        "ჩანთა",
+        "ზურგჩანთა"
+      ],
+      "exclude": [
+        "cooling",
+        "stand",
+        "pad"
+      ]
+    },
+    "mouse": {
+      "label": "მაუსი",
+      "slugs": [
+        "kompiuteris-aqsesuarebi"
+      ],
+      "match": [
+        "mouse",
+        "მაუსი"
+      ],
+      "exclude": [
+        "pad",
+        "ხალიჩა"
+      ]
+    },
+    "cooling-stand": {
+      "label": "გამაგრილებელი სადგამი",
+      "slugs": [
+        "noutbuqis-aqsesuarebi"
+      ],
+      "match": [
+        "cooling",
+        "cooler",
+        "stand",
+        "სადგამი",
+        "გამაგრილებელი"
+      ],
+      "exclude": [
+        "bag",
+        "ჩანთა"
+      ]
+    },
+    "flash-drive": {
+      "label": "ფლეშ მეხსიერება",
+      "slugs": [
+        "kompiuteris-aqsesuarebi",
+        "mekhsiereba-ssd-hdd"
+      ],
+      "match": [
+        "flash",
+        "usb drive",
+        "datatraveler",
+        "pendrive",
+        "ფლეშ"
+      ],
+      "exclude": [
+        "card reader"
+      ]
+    },
+    "flash-card": {
+      "label": "მეხსიერების ბარათი",
+      "slugs": [
+        "mobiluri-telefonis-aqsesuarebi",
+        "kompiuteris-aqsesuarebi"
+      ],
+      "match": [
+        "microsd",
+        "micro sd",
+        "sdxc",
+        "sdhc",
+        "memory card",
+        "მეხსიერების ბარათი"
+      ],
+      "exclude": []
+    },
+    "wall-mount": {
+      "label": "საკიდი",
+      "slugs": [
+        "televizoris-aqsesuarebi"
+      ],
+      "match": [
+        "mount",
+        "bracket",
+        "საკიდი",
+        "კრონშტეინი",
+        "stand"
+      ],
+      "exclude": [
+        "cable",
+        "კაბელი"
+      ]
+    },
+    "soundbar": {
+      "label": "საუნდბარი",
+      "slugs": [
+        "audio-sistemebi",
+        "portatuli-dinamiki"
+      ],
+      "match": [
+        "soundbar",
+        "sound bar",
+        "საუნდბარი"
+      ],
+      "exclude": []
+    },
+    "hdmi-cable": {
+      "label": "HDMI კაბელი",
+      "slugs": [
+        "televizoris-aqsesuarebi",
+        "kompiuteris-aqsesuarebi"
+      ],
+      "match": [
+        "hdmi"
+      ],
+      "exclude": []
+    },
+    "joystick": {
+      "label": "ჯოისტიკი",
+      "slugs": [
+        "geiming-kontroleri",
+        "geiming-aqsesuarebi"
+      ],
+      "match": [
+        "controller",
+        "gamepad",
+        "joystick",
+        "ჯოისტიკი",
+        "dualsense",
+        "dualshock"
+      ],
+      "exclude": []
+    },
+    "keyboard": {
+      "label": "კლავიატურა",
+      "slugs": [
+        "kompiuteris-aqsesuarebi"
+      ],
+      "match": [
+        "keyboard",
+        "კლავიატურა"
+      ],
+      "exclude": []
+    },
+    "mouse-pad": {
+      "label": "მაუსპადი",
+      "slugs": [
+        "kompiuteris-aqsesuarebi",
+        "geiming-aqsesuarebi"
+      ],
+      "match": [
+        "mouse pad",
+        "mousepad",
+        "ხალიჩა"
+      ],
+      "exclude": []
+    },
+    "smartwatch-strap": {
+      "label": "სამაჯური",
+      "slugs": [
+        "smart-saatis-aqsesuarebi"
+      ],
+      "match": [
+        "strap",
+        "band",
+        "სამაჯური",
+        "სამაჯი"
+      ],
+      "exclude": [],
+      "requiresModelMatch": true
+    }
+  },
+  "byCategory": {
+    "smartphone": [
+      "case",
+      "screen-protector",
+      "charger",
+      "power-bank",
+      "headphones"
+    ],
+    "TABLET": [
+      "case",
+      "screen-protector",
+      "charger",
+      "flash-card"
+    ],
+    "NOTEBOOK": [
+      "notebook-bag",
+      "mouse",
+      "cooling-stand",
+      "flash-drive",
+      "headphones"
+    ],
+    "PC All-in-One": [
+      "keyboard",
+      "mouse",
+      "headphones",
+      "flash-drive"
+    ],
+    "TV": [
+      "wall-mount",
+      "soundbar",
+      "hdmi-cable",
+      "joystick"
+    ],
+    "Monitor": [
+      "hdmi-cable",
+      "keyboard",
+      "mouse",
+      "headphones"
+    ],
+    "Gaming": [
+      "joystick",
+      "headphones",
+      "hdmi-cable"
+    ],
+    "Joystick": [
+      "headphones",
+      "flash-drive"
+    ],
+    "Mouse": [
+      "mouse-pad",
+      "keyboard",
+      "headphones"
+    ],
+    "Keyboard": [
+      "mouse",
+      "mouse-pad",
+      "headphones"
+    ],
+    "Headphone": [
+      "charger",
+      "power-bank",
+      "flash-drive"
+    ],
+    "Speaker": [
+      "charger",
+      "power-bank",
+      "hdmi-cable"
+    ],
+    "Flash Drive": [
+      "flash-card",
+      "mouse",
+      "keyboard"
+    ],
+    "Flash Card": [
+      "flash-drive",
+      "case"
+    ],
+    "Printer": [
+      "flash-drive",
+      "mouse",
+      "keyboard"
+    ],
+    "Router": [
+      "flash-drive",
+      "hdmi-cable"
+    ],
+    "Notebook Bag": [
+      "mouse",
+      "cooling-stand",
+      "flash-drive"
+    ],
+    "Mouse Pad": [
+      "mouse",
+      "keyboard",
+      "headphones"
+    ],
+    "Cooling Stand": [
+      "notebook-bag",
+      "mouse",
+      "flash-drive"
+    ],
+    "Adapter": [
+      "flash-drive",
+      "hdmi-cable"
+    ],
+    "UPS": [
+      "hdmi-cable",
+      "flash-drive"
+    ],
+    "HDD / Internal": [
+      "flash-drive",
+      "flash-card"
+    ],
+    "HDD / External": [
+      "flash-drive",
+      "flash-card"
+    ],
+    "Microphone": [
+      "headphones",
+      "mouse-pad"
+    ]
+  }
+}
