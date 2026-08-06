@@ -1,10 +1,5 @@
 import Image from "next/image";
-
-/**
- * Campaign end date, shown in the terms line. One place to change when the
- * dates move — the copy below reads it rather than repeating it.
- */
-const CAMPAIGN_ENDS = "23 აგვისტო";
+import { CAMPAIGN_END_INCLUSIVE } from "@/lib/campaign";
 
 const BRANCH = {
   address: "თელავი, ერეკლე II-ის გამზირი",
@@ -154,9 +149,9 @@ export default function Footer() {
         </div>
 
         <p className="alta-corners mt-8 border-l-4 border-alta-teal bg-alta-50 px-4 py-3 text-xs leading-relaxed text-alta-700">
-          აქციის ფასები მოქმედებს მხოლოდ თელავის ფილიალში, {CAMPAIGN_ENDS}-ის
-          ჩათვლით ან მარაგის ამოწურვამდე. ფასები მითითებულია ლარში, დღგ-ის
-          ჩათვლით.
+          აქციის ფასები მოქმედებს მხოლოდ თელავის ფილიალში,{" "}
+          {CAMPAIGN_END_INCLUSIVE} ან მარაგის ამოწურვამდე. ფასები მითითებულია
+          ლარში, დღგ-ის ჩათვლით.
         </p>
       </div>
 

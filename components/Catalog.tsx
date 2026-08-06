@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { products } from "@/lib/catalog";
 import { discountPercent } from "@/lib/format";
+import { CAMPAIGN_END_INCLUSIVE } from "@/lib/campaign";
 import {
   applyFilters,
   buildSearchParams,
@@ -186,8 +187,8 @@ export default function Catalog() {
           დიდი ფასდაკლება თელავში!
         </h1>
         <p className="mt-1.5 text-sm text-alta-700">
-          {products.length} პროდუქტი {maxDiscount}%-მდე ფასდაკლებით — მარაგის
-          ამოწურვამდე.
+          {products.length} პროდუქტი {maxDiscount}%-მდე ფასდაკლებით —{" "}
+          {CAMPAIGN_END_INCLUSIVE}.
         </p>
       </header>
 
