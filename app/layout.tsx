@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Suspense } from "react";
 import SiteHeader from "@/components/SiteHeader";
-import SiteFooter from "@/components/SiteFooter";
+import Footer from "@/components/Footer";
 import Analytics from "@/components/Analytics";
 import CompareProvider from "@/components/CompareProvider";
 import CompareBar from "@/components/CompareBar";
@@ -30,7 +30,7 @@ export default function RootLayout({
         <CompareProvider>
           <SiteHeader />
           <main className="flex-1">{children}</main>
-          <SiteFooter />
+          <Footer />
           <CompareBar />
           {/* Inside the provider so it can sit above the comparison bar. */}
           <MessengerButton />
