@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Suspense } from "react";
+import { Analytics as VercelAnalytics } from "@vercel/analytics/next";
 import SiteHeader from "@/components/SiteHeader";
 import Footer from "@/components/Footer";
 import Analytics from "@/components/Analytics";
@@ -40,6 +41,20 @@ export default function RootLayout({
         <Suspense fallback={null}>
           <Analytics />
         </Suspense>
+
+        {/*
+          Vercel Web Analytics. Needs no key — it identifies the project from
+          the deployment it is served by, which is also why it does nothing
+          anywhere else: the script lives at /_vercel/insights/script.js, a path
+          only Vercel serves. Locally it 404s, and that is expected.
+
+          Deliberately alongside our own tag rather than instead of it. This one
+          counts every route change, including the `history.replaceState` the
+          catalog does on each filter change, so its "page views" run high; ours
+          fires once per pathname. Read Vercel's numbers as traffic, GA4's as
+          pages actually visited.
+        */}
+        <VercelAnalytics />
       </body>
     </html>
   );
