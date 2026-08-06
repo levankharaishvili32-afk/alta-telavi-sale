@@ -196,3 +196,15 @@ input[type="range"].range-thumb:focus-visible::-webkit-slider-thumb {
     scroll-behavior: auto !important;
   }
 }
+
+/* The Messenger nudge sliding out from behind its button. */
+@keyframes messenger-slide {
+  from {
+    opacity: 0;
+    transform: translateX(0.75rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}

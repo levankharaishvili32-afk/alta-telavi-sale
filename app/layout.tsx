@@ -6,6 +6,7 @@ import SiteFooter from "@/components/SiteFooter";
 import Analytics from "@/components/Analytics";
 import CompareProvider from "@/components/CompareProvider";
 import CompareBar from "@/components/CompareBar";
+import MessengerButton from "@/components/MessengerButton";
 
 export const metadata: Metadata = {
   title: {
@@ -31,6 +32,8 @@ export default function RootLayout({
           <main className="flex-1">{children}</main>
           <SiteFooter />
           <CompareBar />
+          {/* Inside the provider so it can sit above the comparison bar. */}
+          <MessengerButton />
         </CompareProvider>
         {/* usePathname() inside makes this a client boundary; the Suspense
             keeps it from opting the whole layout out of static rendering. */}

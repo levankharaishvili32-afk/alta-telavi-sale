@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ProductImage from "./ProductImage";
 import ComparePicker from "./ComparePicker";
 import { useCompare } from "./CompareProvider";
@@ -35,6 +35,33 @@ export default function CompareBar() {
   const [picking, setPicking] = useState(false);
   const pathname = usePathname();
 
+  /*
+   * Publish the bar's measured height as `--compare-bar-h` so anything else
+   * anchored to the bottom of the screen — the Messenger button — can sit
+   * above it. Measured rather than hardcoded because the bar stacks on a
+   * phone, so its height is not a constant.
+   */
+  const barRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    const node = barRef.current;
+    const root = document.documentElement;
+    if (!node) {
+      root.style.setProperty("--compare-bar-h", "0px");
+      return;
+    }
+    const observer = new ResizeObserver(([entry]) => {
+      root.style.setProperty(
+        "--compare-bar-h",
+        `${Math.round(entry.contentRect.height)}px`,
+      );
+    });
+    observer.observe(node);
+    return () => {
+      observer.disconnect();
+      root.style.setProperty("--compare-bar-h", "0px");
+    };
+  });
+
   if (pathname === "/compare" && !pending) return null;
   if (!items.length && !pending) return null;
 
@@ -56,7 +83,9 @@ export default function CompareBar() {
           {/* Reserves the height the fixed bar occupies, plus a little, so the
               footer clears it instead of ending flush against its top edge. */}
           <div aria-hidden className="h-28 sm:h-24" />
-          <div className="fixed inset-x-0 bottom-0 z-40 border-t border-alta-100 bg-white/95 shadow-[0_-8px_24px_-12px_rgb(61_41_86_/_0.3)] backdrop-blur">
+          <div
+            ref={barRef}
+            className="fixed inset-x-0 bottom-0 z-40 border-t border-alta-100 bg-white/95 shadow-[0_-8px_24px_-12px_rgb(61_41_86_/_0.3)] backdrop-blur">
             <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:gap-4 sm:px-6 lg:px-8">
               <p className="shrink-0 text-xs font-medium text-alta-400 sm:hidden">
                 შედარება · {scope ? scopeLabel(scope) : ""}
