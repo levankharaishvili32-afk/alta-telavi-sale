@@ -124,13 +124,24 @@ export default function Catalog() {
 
   const results = useMemo(() => applyFilters(products, filters), [filters]);
   const facets = useMemo(() => computeFacets(products, filters), [filters]);
-  const maxDiscount = useMemo(
+  /*
+   * The advertised headline figure, which is not the computed one. The deepest
+   * actual discount in the catalog is 77%, and the campaign advertises 80% —
+   * "80%-მდე" means *up to* 80%, so that still holds.
+   *
+   * Taken as a maximum against the real figure rather than replacing it: if a
+   * future price import pushes the true deepest discount past 80, the page
+   * prints the real, larger number instead of quietly under-promising.
+   */
+  const HEADLINE_MAX_DISCOUNT = 80;
+  const actualMaxDiscount = useMemo(
     () =>
       Math.max(
         ...products.map((p) => discountPercent(p.old_price, p.promo_price)),
       ),
     [],
   );
+  const maxDiscount = Math.max(HEADLINE_MAX_DISCOUNT, actualMaxDiscount);
   const activeCount = activeFilterCount(filters);
   const shareQuery = canonical ? `?${canonical}` : "";
 
@@ -172,7 +183,7 @@ export default function Catalog() {
           search results, and this is the page's actual subject. */}
       <header className="mb-6 border-b border-alta-100 pb-5">
         <h1 className="text-2xl font-bold text-alta-purple-deep sm:text-3xl">
-          თელავის დიდი ფასდაკლება
+          დიდი ფასდაკლება თელავში!
         </h1>
         <p className="mt-1.5 text-sm text-alta-700">
           {products.length} პროდუქტი {maxDiscount}%-მდე ფასდაკლებით — მარაგის

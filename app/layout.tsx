@@ -10,8 +10,8 @@ import MessengerButton from "@/components/MessengerButton";
 
 export const metadata: Metadata = {
   title: {
-    default: "თელავის დიდი ფასდაკლება",
-    template: "%s — თელავის დიდი ფასდაკლება",
+    default: "დიდი ფასდაკლება თელავში!",
+    template: "%s — დიდი ფასდაკლება თელავში",
   },
   description:
     "სამზარეულოს, სახლისა და პერსონალური მოვლის ტექნიკის დიდი ფასდაკლება ალტაში. ფასები ლარში, ოფიციალური გარანტიით.",

@@ -45,7 +45,7 @@ export async function generateMetadata({
   const discount = discountPercent(product.old_price, product.promo_price);
   return {
     title: product.title,
-    description: `${product.title} — ${formatPrice(product.promo_price)} (−${discount}%). თელავის დიდი ფასდაკლება.`,
+    description: `${product.title} — ${formatPrice(product.promo_price)} (−${discount}%). დიდი ფასდაკლება თელავში.`,
   };
 }
 
