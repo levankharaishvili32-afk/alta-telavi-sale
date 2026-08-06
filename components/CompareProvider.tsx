@@ -18,6 +18,7 @@ import {
   syncCompareFromStorage,
   writeCompare,
 } from "@/lib/compare-store";
+import { installComparePairsHelper } from "@/lib/compare-pairs";
 import type { Product } from "@/lib/types";
 
 type PendingSwitch = { product: Product; fromScope: string };
@@ -61,8 +62,12 @@ export default function CompareProvider({
   );
   const [pending, setPending] = useState<PendingSwitch | null>(null);
 
-  // One-shot: adopt whatever storage already held when the page loaded.
-  useEffect(syncCompareFromStorage, []);
+  // One-shot: adopt whatever storage already held when the page loaded, and
+  // expose the comparison log for inspection from the console.
+  useEffect(() => {
+    syncCompareFromStorage();
+    installComparePairsHelper();
+  }, []);
 
   const byId = useMemo(() => new Map(products.map((p) => [p.id, p])), []);
 

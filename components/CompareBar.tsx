@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 import ProductImage from "./ProductImage";
+import ComparePicker from "./ComparePicker";
 import { useCompare } from "./CompareProvider";
 import {
   MAX_COMPARE,
@@ -25,10 +27,12 @@ export default function CompareBar() {
     scope,
     remove,
     clear,
+    toggle,
     pending,
     confirmSwitch,
     cancelSwitch,
   } = useCompare();
+  const [picking, setPicking] = useState(false);
   const pathname = usePathname();
 
   if (pathname === "/compare" && !pending) return null;
@@ -117,6 +121,9 @@ export default function CompareBar() {
                   გასუფთავება
                 </button>
 
+                {/* With one product picked this is not a dead button: it
+                    opens the picker and asks what to compare against, which
+                    is work the shopper would otherwise do alone. */}
                 {enough ? (
                   <Link
                     href={compareHref(items.map((p) => p.id))}
@@ -125,17 +132,29 @@ export default function CompareBar() {
                     შედარება ({items.length})
                   </Link>
                 ) : (
-                  <span
-                    className="alta-corners cursor-not-allowed bg-alta-200 px-6 py-3 text-sm font-bold text-white"
-                    title={`შესადარებლად აირჩიეთ მინიმუმ ${MIN_COMPARE} პროდუქტი`}
+                  <button
+                    type="button"
+                    onClick={() => setPicking(true)}
+                    className="alta-corners bg-alta-purple px-6 py-3 text-sm font-bold text-white transition hover:bg-alta-700"
                   >
                     შედარება ({items.length})
-                  </span>
+                  </button>
                 )}
               </div>
             </div>
           </div>
         </>
+      )}
+
+      {picking && items.length === 1 && (
+        <ComparePicker
+          selected={items[0]}
+          onPick={(id) => {
+            toggle(id);
+            setPicking(false);
+          }}
+          onClose={() => setPicking(false)}
+        />
       )}
     </>
   );

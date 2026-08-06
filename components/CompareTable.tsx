@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import ProductImage from "./ProductImage";
 import { useCompare } from "./CompareProvider";
 import { discountPercent, formatPrice } from "@/lib/format";
+import { recordComparison } from "@/lib/compare-pairs";
 import {
   MIN_COMPARE,
   compareHref,
@@ -49,6 +50,20 @@ export default function CompareTable() {
       return { key, values, same };
     });
   }, [scope, items]);
+
+  /*
+   * Log the comparison as it happens. Keyed on the id set so re-renders — the
+   * differences toggle, a column drop — do not inflate the counts; a genuinely
+   * different set is a genuinely different comparison and gets its own entry.
+   * Nothing reads this yet; see lib/compare-pairs.ts for what it is for.
+   */
+  const loggedRef = useRef<string | null>(null);
+  const logKey = items.map((p) => p.id).join(",");
+  useEffect(() => {
+    if (!logKey || loggedRef.current === logKey) return;
+    loggedRef.current = logKey;
+    recordComparison(logKey.split(","));
+  }, [logKey]);
 
   if (items.length === 0) return <EmptyState />;
 

@@ -11,7 +11,8 @@
     "import:feed": "node scripts/import-xml-feed.mjs",
     "scrape": "node scripts/scrape-alta.mjs",
     "bundles": "node scripts/build-bundles.mjs",
-    "specs": "node scripts/normalize-specs.mjs"
+    "specs": "node scripts/normalize-specs.mjs",
+    "comparisons": "node scripts/build-comparisons.mjs"
   },
   "dependencies": {
     "@fontsource/firago": "^5.3.0",
