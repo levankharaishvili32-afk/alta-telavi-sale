@@ -13,8 +13,16 @@ const PREVIEW = 12;
  * Every row is in the markup from the start — the toggle only hides them — so
  * the full table is still in the HTML for search engines and for Ctrl+F.
  */
-export default function SpecTable({ specs }: { specs: Record<string, string> }) {
-  const entries = Object.entries(specs);
+export default function SpecTable({
+  specs,
+  other,
+}: {
+  specs: Record<string, string>;
+  /** the long tail from `specs_other` — shown after the canonical rows */
+  other?: Record<string, string>;
+}) {
+  // Canonical keys first, in schema order, then whatever else was scraped.
+  const entries = [...Object.entries(specs), ...Object.entries(other ?? {})];
   const [expanded, setExpanded] = useState(false);
   const collapsible = entries.length > PREVIEW + 4;
   const hiddenCount = entries.length - PREVIEW;

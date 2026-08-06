@@ -48,6 +48,9 @@
  *   npm run scrape -- --limit 25
  *   npm run scrape -- --refresh    ignore cached pages and re-fetch
  *   npm run scrape -- --no-images  skip the image download, keep remote URLs
+ *
+ * Run `npm run specs` afterwards. This script writes raw scraped keys; that one
+ * folds them onto the canonical vocabulary the comparison table reads.
  */
 
 import { createHash } from "node:crypto";
@@ -544,6 +547,9 @@ function discountPct(oldPrice, promoPrice) {
  * by part number.
  */
 const NON_FACET_SPECS = new Set([
+  // Brand is a first-class product field with its own facet; offering it a
+  // second time as a spec renders two identical "ბრენდი" panels.
+  "ბრენდი",
   "მოდელი/PN",
   "მოდელი",
   "სერია",

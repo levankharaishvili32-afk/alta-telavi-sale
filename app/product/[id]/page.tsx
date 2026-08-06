@@ -15,6 +15,7 @@ import AltaIcon from "@/components/AltaIcon";
 import SpecTable from "@/components/SpecTable";
 import BundleBox from "@/components/BundleBox";
 import { bundleFor } from "@/lib/bundles";
+import CompareToggle from "@/components/CompareToggle";
 
 /**
  * The Telavi branch on Google Maps. Built with the documented Maps URLs API
@@ -180,7 +181,7 @@ export default async function ProductPage({ params, searchParams }: PageProps) {
             )}
           </div>
 
-          <div className="mt-7">
+          <div className="mt-7 flex flex-wrap gap-3">
             <a
               href={TELAVI_BRANCH_MAP}
               target="_blank"
@@ -206,6 +207,7 @@ export default async function ProductPage({ params, searchParams }: PageProps) {
               </svg>
               თელავის ფილიალი
             </a>
+            <CompareToggle id={product.id} variant="detail" />
           </div>
         </div>
       </div>
@@ -215,7 +217,7 @@ export default async function ProductPage({ params, searchParams }: PageProps) {
         <h2 className="text-lg font-bold text-alta-purple-deep">
           მახასიათებლები
         </h2>
-        <SpecTable specs={product.specs} />
+        <SpecTable specs={product.specs} other={product.specs_other} />
       </section>
 
       {/* Related */}

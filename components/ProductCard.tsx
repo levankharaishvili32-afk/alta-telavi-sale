@@ -1,5 +1,6 @@
 import Link from "next/link";
 import ProductImage from "./ProductImage";
+import CompareToggle from "./CompareToggle";
 import type { Product } from "@/lib/types";
 import { discountPercent, formatPrice } from "@/lib/format";
 import { categoryLabel, subcategoryLabel } from "@/lib/catalog";
@@ -29,6 +30,13 @@ export default function ProductCard({
             −{discount}%
           </span>
         )}
+
+        {/* Top-right so it never collides with the discount badge. Sits above
+            the card-wide link, which is why it stops propagation. */}
+        <CompareToggle
+          id={product.id}
+          className="absolute right-3 top-3 opacity-0 transition group-hover:opacity-100 focus-visible:opacity-100 max-lg:opacity-100"
+        />
 
         {!product.stock && (
           <span className="absolute inset-0 grid place-items-center bg-white/70 backdrop-blur-[1px]">

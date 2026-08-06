@@ -18,7 +18,16 @@ export type Product = {
    */
   discount_pct?: number;
   stock: boolean;
+  /**
+   * Canonical, ordered attributes — the keys listed for this product's scope in
+   * `data/spec-schema.json`. These are what the comparison table renders.
+   */
   specs: Record<string, string>;
+  /**
+   * Everything else the scrape found. Kept verbatim so nothing is lost, shown
+   * on the detail page under the canonical rows, never compared.
+   */
+  specs_other?: Record<string, string>;
   /** where alta.ge files the product — informational, filtering uses the CSV */
   alta_breadcrumb?: string[];
   alta_category?: string | null;
