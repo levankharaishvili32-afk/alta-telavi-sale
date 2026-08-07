@@ -1,28 +1,27 @@
 {
   "home": [],
-  "home/accessories-sda": [],
   "home/air-fryer": [
-    "ვოლტაჟი",
-    "კორპუსის მასალა"
+    "კონტროლის ტიპი"
   ],
   "home/beauty-health": [],
   "home/blender": [
-    "ტიპი"
+    "ტიპი",
+    "ჯამის მასალა",
+    "ჯამის მოცულობა"
   ],
+  "home/boiler": [],
   "home/chopper": [],
   "home/climate": [
     "სიჩქარეების რაოდენობა"
   ],
+  "home/coffee-grinder": [],
   "home/coffee-maker": [],
   "home/coffee-press": [],
   "home/fruit-dryer": [],
-  "home/grill": [],
   "home/iron": [
     "ორთქლის გამოყოფა"
   ],
-  "home/juicer": [],
   "home/kettle": [
-    "სიმძლავრე",
     "წყლის კონტეინერი"
   ],
   "home/kitchen-machine": [
@@ -30,19 +29,19 @@
     "სიჩქარეების რაოდენობა"
   ],
   "home/meat-machine": [],
-  "home/microwave": [
-    "მიკროტალღური ღუმელის სიმძლავრე",
-    "შიდა მოცულობა",
-    "გრილი",
-    "შიდა მასალა"
-  ],
+  "home/microwave": [],
+  "home/milk-frother": [],
+  "home/mixer": [],
+  "home/multi-boiler": [],
   "home/oven": [],
   "home/popcorn-maker": [],
+  "home/sandwich-maker": [],
   "home/toaster": [],
   "home/vacuum": [
     "ტიპი",
     "წმენდის ტიპი"
   ],
+  "home/waffle-maker": [],
   "it": [],
   "it/adapter": [],
   "it/cooling-stand": [],
@@ -77,7 +76,8 @@
     "გარჩევადობა",
     "დიაგონალი",
     "ეკრანის დაყოვნების დრო",
-    "სიკაშკაშე"
+    "სიკაშკაშე",
+    "სტატიკური კონტრასტულობის კოეფიციენტი"
   ],
   "it/mouse": [
     "სენსორის ტიპი",
@@ -90,7 +90,8 @@
     "3.5 mm Audio Jack",
     "ბირთვების რაოდენობა",
     "განახლების სიხშირე",
-    "გარჩევადობა"
+    "გარჩევადობა",
+    "დიაგონალი"
   ],
   "it/notebook-bag": [],
   "it/pc-all-in-one": [],
@@ -99,7 +100,8 @@
     "ბეჭდვის ტექნოლოგია",
     "პრინტერის ტიპი",
     "ფერი",
-    "ბეჭდვის ტიპი"
+    "ბეჭდვის ტიპი",
+    "ორმხრივი ბეჭდვა (Duplex)"
   ],
   "it/router": [
     "ანტენების რაოდენობა",
@@ -128,14 +130,8 @@
     "შემავალი დენის სიხშირე",
     "შემავალი სიმძლავრე"
   ],
-  "mobile": [
-    "3.5 mm Audio Jack",
-    "ბირთვების რაოდენობა"
-  ],
-  "mobile/smartphone": [
-    "3.5 mm Audio Jack",
-    "ბირთვების რაოდენობა"
-  ],
+  "mobile": [],
+  "mobile/smartphone": [],
   "tv-gaming": [
     "Bluetooth",
     "USB Type-C"
@@ -151,6 +147,7 @@
     "განახლების სიხშირე",
     "დიაგონალი",
     "ოპერაციული სისტემა",
-    "ტიპი"
+    "ტიპი",
+    "Bluetooth"
   ]
 }

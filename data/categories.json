@@ -1,5 +1,117 @@
 [
   {
+    "id": "home",
+    "label": "თეთრი ტექნიკა",
+    "subcategories": [
+      {
+        "id": "air-fryer",
+        "label": "აეროგრილები"
+      },
+      {
+        "id": "blender",
+        "label": "ბლენდერები"
+      },
+      {
+        "id": "kettle",
+        "label": "ელექტროჩაიდნები"
+      },
+      {
+        "id": "waffle-maker",
+        "label": "ვაფლის აპარატები"
+      },
+      {
+        "id": "climate",
+        "label": "კლიმატური ტექნიკა"
+      },
+      {
+        "id": "microwave",
+        "label": "მიკროტალღური ღუმელები"
+      },
+      {
+        "id": "mixer",
+        "label": "მიქსერები"
+      },
+      {
+        "id": "vacuum",
+        "label": "მტვერსასრუტები"
+      },
+      {
+        "id": "multi-boiler",
+        "label": "მულტიქვაბები"
+      },
+      {
+        "id": "popcorn-maker",
+        "label": "პოპკორნის აპარატები"
+      },
+      {
+        "id": "milk-frother",
+        "label": "რძის ამომყვანები"
+      },
+      {
+        "id": "kitchen-machine",
+        "label": "სამზარეულოს კომბაინები"
+      },
+      {
+        "id": "sandwich-maker",
+        "label": "სენდვიჩმეიკერები"
+      },
+      {
+        "id": "beauty-health",
+        "label": "სილამაზე და ჯანმრთელობა"
+      },
+      {
+        "id": "toaster",
+        "label": "ტოსტერები"
+      },
+      {
+        "id": "iron",
+        "label": "უთოები"
+      },
+      {
+        "id": "oven",
+        "label": "ღუმელები"
+      },
+      {
+        "id": "coffee-maker",
+        "label": "ყავის აპარატები"
+      },
+      {
+        "id": "coffee-press",
+        "label": "ყავის პრესები"
+      },
+      {
+        "id": "coffee-grinder",
+        "label": "ყავის საფქვავები"
+      },
+      {
+        "id": "chopper",
+        "label": "ჩოპერები"
+      },
+      {
+        "id": "fruit-dryer",
+        "label": "ხილის საშრობები"
+      },
+      {
+        "id": "meat-machine",
+        "label": "ხორცსაკეპები"
+      },
+      {
+        "id": "boiler",
+        "label": "ჰოთ-დოგის აპარატები"
+      }
+    ]
+  },
+  {
+    "id": "mobile",
+    "label": "მობილურები და აქსესუარები",
+    "subcategories": [
+      {
+        "id": "smartphone",
+        "label": "სმარტფონები"
+      }
+    ]
+  },
+  {
     "id": "it",
     "label": "IT ტექნიკა",
     "subcategories": [
@@ -100,102 +212,6 @@
       {
         "id": "tv",
         "label": "ტელევიზორები"
-      }
-    ]
-  },
-  {
-    "id": "home",
-    "label": "თეთრი ტექნიკა",
-    "subcategories": [
-      {
-        "id": "air-fryer",
-        "label": "აეროგრილები"
-      },
-      {
-        "id": "accessories-sda",
-        "label": "აქსესუარები"
-      },
-      {
-        "id": "blender",
-        "label": "ბლენდერები"
-      },
-      {
-        "id": "grill",
-        "label": "გრილები"
-      },
-      {
-        "id": "kettle",
-        "label": "ელექტროჩაიდნები"
-      },
-      {
-        "id": "climate",
-        "label": "კლიმატური ტექნიკა"
-      },
-      {
-        "id": "microwave",
-        "label": "მიკროტალღური ღუმელები"
-      },
-      {
-        "id": "vacuum",
-        "label": "მტვერსასრუტები"
-      },
-      {
-        "id": "popcorn-maker",
-        "label": "პოპკორნის აპარატები"
-      },
-      {
-        "id": "kitchen-machine",
-        "label": "სამზარეულოს კომბაინები"
-      },
-      {
-        "id": "beauty-health",
-        "label": "სილამაზე და ჯანმრთელობა"
-      },
-      {
-        "id": "toaster",
-        "label": "ტოსტერები"
-      },
-      {
-        "id": "iron",
-        "label": "უთოები"
-      },
-      {
-        "id": "oven",
-        "label": "ღუმელები"
-      },
-      {
-        "id": "coffee-maker",
-        "label": "ყავის აპარატები"
-      },
-      {
-        "id": "coffee-press",
-        "label": "ყავის პრესები"
-      },
-      {
-        "id": "chopper",
-        "label": "ჩოპერები"
-      },
-      {
-        "id": "juicer",
-        "label": "წვენსაწურები"
-      },
-      {
-        "id": "fruit-dryer",
-        "label": "ხილის საშრობები"
-      },
-      {
-        "id": "meat-machine",
-        "label": "ხორცსაკეპები"
-      }
-    ]
-  },
-  {
-    "id": "mobile",
-    "label": "მობილურები და აქსესუარები",
-    "subcategories": [
-      {
-        "id": "smartphone",
-        "label": "სმარტფონები"
       }
     ]
   }

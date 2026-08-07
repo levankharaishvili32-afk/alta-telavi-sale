@@ -248,9 +248,31 @@ async function loadCatalog(flags) {
 
   const source = flags.fromFeed ? `feed:${flags.fromFeed}` : "graph";
   console.log(`კატალოგის ჩამოტვირთვა — ${source}`);
-  const products = flags.fromFeed
-    ? await fetchFromFeed(flags.fromFeed)
-    : await fetchFromGraph();
+
+  let products;
+  try {
+    products = flags.fromFeed
+      ? await fetchFromFeed(flags.fromFeed)
+      : await fetchFromGraph();
+  } catch (error) {
+    /*
+     * An expired cache is worth far more than no catalog at all. The 24h TTL
+     * exists to keep the accessory suggestions fresh, not to make the build
+     * fail the day Alta's feed is unreachable — and it regularly is from a
+     * sandboxed environment. Loud, dated, and it still runs.
+     */
+    if (!cached?.products?.length) throw error;
+    const days = Math.round(
+      (Date.now() - Date.parse(cached.fetched_at)) / 86_400_000,
+    );
+    console.warn(
+      `!! ჩამოტვირთვა ვერ მოხერხდა (${String(error.message ?? error)})\n` +
+        `!! გამოყენებულია ვადაგასული ქეში: ${cached.products.length} პროდუქტი, ` +
+        `${days} დღის წინ. სიახლისთვის — \`npm run bundles -- --force\` ` +
+        `ქსელთან წვდომისას.`,
+    );
+    return { products: cached.products, source: cached.source, cached: true };
+  }
 
   const clean = products.filter((p) => p.retailer_id && p.name);
   await writeJson(CATALOG_CACHE, {

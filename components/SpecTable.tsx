@@ -24,6 +24,12 @@ export default function SpecTable({
   // Canonical keys first, in schema order, then whatever else was scraped.
   const entries = [...Object.entries(specs), ...Object.entries(other ?? {})];
   const [expanded, setExpanded] = useState(false);
+
+  // A product built from the Meta feed rather than scraped has no attributes
+  // at all. An empty bordered box under a "მახასიათებლები" heading promises
+  // something and then delivers nothing; the caller drops the heading too.
+  if (!entries.length) return null;
+
   const collapsible = entries.length > PREVIEW + 4;
   const hiddenCount = entries.length - PREVIEW;
 

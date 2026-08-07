@@ -83,12 +83,14 @@ function parseArgs(argv) {
     images: true,
     limit: Infinity,
     only: null,
+    fromFeed: false,
   };
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i];
     if (arg === "--probe") flags.probe = true;
     else if (arg === "--refresh") flags.refresh = true;
     else if (arg === "--no-images") flags.images = false;
+    else if (arg === "--from-feed") flags.fromFeed = true;
     else if (arg === "--limit") flags.limit = Number(argv[++i]);
     else if (arg === "--only")
       flags.only = new Set(
@@ -426,8 +428,69 @@ function tidyRecord(record) {
   };
 }
 
+/**
+ * A product record assembled from `data/alta-catalog.json` — the Meta product
+ * feed `npm run bundles` already keeps — instead of from the product page.
+ *
+ * The feed carries the name, brand, image and canonical URL, which is enough
+ * for a product to appear correctly in the grid and on its own page. What it
+ * does not carry is specifications, so a feed-built product has none: it shows
+ * no attribute rows and cannot be usefully compared until a real scrape fills
+ * it in. Deliberately *not* written to `.cache/products/`, so the next run with
+ * alta.ge reachable scrapes it properly rather than finding a cached stand-in;
+ * `reports/scrape-report.md` lists everything still in this state.
+ *
+ * Enabled with `--from-feed`, never automatically: a silent downgrade from
+ * "scraped" to "the feed said so" is exactly the kind of thing that should be
+ * asked for out loud.
+ */
+/**
+ * The feed leaves `brand` null on about a third of its rows, and a product
+ * filed under "სხვა" is invisible to the brand facet — which is how somebody
+ * looking for a Russell Hobbs kettle fails to find one that is right there.
+ *
+ * The names are in the titles, so this reads them back out: the longest brand
+ * the feed itself uses anywhere that this title starts with. Vocabulary from
+ * the data, no hardcoded list, and "Russell Hobbs" beats "Russell" because
+ * longer wins.
+ */
+function guessBrand(title, vocabulary) {
+  const lower = String(title ?? "").toLowerCase();
+  let best = null;
+  for (const brand of vocabulary) {
+    if (!lower.startsWith(brand.toLowerCase())) continue;
+    if (!best || brand.length > best.length) best = brand;
+  }
+  if (best) return best;
+
+  // Nothing in the vocabulary matched, which happens for a brand alta.ge
+  // stocks but never labels — Smarton, for one. Titles here are written
+  // "<Brand> <model>", so the first word is the brand as long as it reads like
+  // a name and not like a part number: letters only, and more than two of them.
+  const first = String(title ?? "").trim().split(/\s+/)[0] ?? "";
+  return /^[A-Za-z][A-Za-z'&-]{2,}$/.test(first) ? first : null;
+}
+
+function fromFeed(id, feed) {
+  const item = feed.get(String(id));
+  if (!item) return null;
+  return {
+    id: String(id),
+    title: clean(item.name),
+    brand: clean(item.brand) || guessBrand(item.name, feed.brands) || null,
+    description: null,
+    breadcrumbs: [],
+    categoryName: item.category_slug ?? null,
+    specs: {},
+    images: normaliseImages([item.image_url]),
+    url: item.url ?? null,
+    route: null,
+    source: "feed",
+  };
+}
+
 /** Full record for one CSV id. Cached end-to-end in .cache/products/<id>.json. */
-async function scrapeOne(id, flags) {
+async function scrapeOne(id, flags, feed) {
   const recordFile = path.join(CACHE, "products", `${id}.json`);
   if (!flags.refresh) {
     const cached = await readJson(recordFile);
@@ -435,10 +498,16 @@ async function scrapeOne(id, flags) {
   }
 
   const resolved = await resolveRoute(id, flags);
-  if (resolved.error) return { id, error: resolved.error };
+  if (resolved.error) {
+    const fallback = flags.fromFeed && feed ? fromFeed(id, feed) : null;
+    return fallback ?? { id, error: resolved.error };
+  }
 
   const page = await fetchPage(id, resolved.route, flags);
-  if (page.error) return { id, error: page.error, route: resolved.route };
+  if (page.error) {
+    const fallback = flags.fromFeed && feed ? fromFeed(id, feed) : null;
+    return fallback ?? { id, error: page.error, route: resolved.route };
+  }
 
   const data = extract(page.html);
   if (!data) return { id, error: "no parseable product data on page", route: resolved.route };
@@ -637,6 +706,10 @@ async function writeReport({ rows, results, flags, started }) {
   }
 
   const imageFailures = results.filter((r) => r.imageFailures?.length);
+  // Built from the Meta feed because alta.ge could not be reached. They render
+  // correctly but carry no specifications, so they cannot be compared and no
+  // spec filter finds them — the list below is the to-do for the next run.
+  const feedBuilt = results.filter((r) => r.source === "feed");
   const table = (list, cols) =>
     list.length
       ? [
@@ -668,8 +741,20 @@ async function writeReport({ rows, results, flags, started }) {
 | ვერ მოიძებნა alta.ge-ზე | ${notFound.length} |
 | შეცდომით დასრულდა | ${failed.length} |
 | ფოტოს გარეშე | ${noImages.length} |
+| ფიდიდან აღდგენილი (მახასიათებლების გარეშე) | ${feedBuilt.length} |
 | CSV-ში ფასის კონფლიქტით მონიშნული | ${conflicts.length} |
 
+## ფიდიდან აღდგენილი (${feedBuilt.length})
+
+alta.ge მიუწვდომელი იყო, ამიტომ ეს პროდუქტები \`data/alta-catalog.json\`-იდან
+აიწყო: დასახელება, ბრენდი, ფოტო და ბმული სწორია, **მახასიათებლები კი არ აქვთ** —
+შესაბამისად შედარების ცხრილში ცარიელია და მახასიათებლების ფილტრი მათ ვერ პოულობს.
+შემდეგი \`npm run scrape\`, როცა alta.ge ხელმისაწვდომია, ავტომატურად ჩაანაცვლებს.
+
+${table(
+  feedBuilt.map((r) => `| ${r.id} | ${(r.title ?? "").replace(/\|/g, "/")} |`),
+  ["კოდი", "დასახელება"],
+)}
 ## ვერ მოიძებნა alta.ge-ზე (${notFound.length})
 
 საძიებო API-მ ამ კოდებზე დამთხვევა ვერ დააბრუნა — პროდუქტი სავარაუდოდ მოხსნილია საიტიდან.
@@ -754,9 +839,28 @@ async function main() {
 
   console.log(`დასამუშავებელი: ${queue.length} / ${rows.length}`);
 
+  /** retailer_id → feed item, only when --from-feed asked for it. */
+  let feed = null;
+  if (flags.fromFeed) {
+    const catalog = await readJson(path.join(ROOT, "data", "alta-catalog.json"));
+    feed = new Map(
+      (catalog?.products ?? []).map((p) => [String(p.retailer_id), p]),
+    );
+    // Every brand the feed names anywhere, for the rows where it names none.
+    feed.brands = [
+      ...new Set(
+        (catalog?.products ?? []).map((p) => clean(p.brand)).filter(Boolean),
+      ),
+    ];
+    console.log(
+      `--from-feed: data/alta-catalog.json — ${feed.size} ჩანაწერი, ` +
+        `${feed.brands.length} ბრენდი`,
+    );
+  }
+
   const results = [];
   for (const [index, row] of queue.entries()) {
-    const record = await scrapeOne(row.id, flags);
+    const record = await scrapeOne(row.id, flags, feed);
     if (!record.error && flags.images) {
       const { local, failed } = await downloadImages(row.id, record.images);
       record.localImages = local;
@@ -764,7 +868,13 @@ async function main() {
     }
     results.push(record);
 
-    const mark = record.error ? "✗" : record.cached ? "·" : "✓";
+    const mark = record.error
+      ? "✗"
+      : record.cached
+        ? "·"
+        : record.source === "feed"
+          ? "~"
+          : "✓";
     process.stdout.write(
       `${mark} ${String(index + 1).padStart(3)}/${queue.length} ${row.id} ${
         record.error ?? `${record.title} (${record.images.length} ფოტო)`
@@ -800,15 +910,45 @@ async function main() {
   // ---- merge: prices from the CSV, everything else from the scrape --------
 
   const byId = new Map(results.map((r) => [String(r.id), r]));
+
+  /*
+   * What a partial run must not do is delete everything it did not look at.
+   * `--only`, `--limit` and `--probe` all narrow the queue, and this merge
+   * writes the whole of products.json — so without this, `--only 161393` would
+   * leave the site with exactly one product. Anything already written and not
+   * re-scraped this run is carried over, with its prices and category taken
+   * from the CSV as usual, because those are the CSV's to decide.
+   */
+  const partial = flags.only || flags.probe || Number.isFinite(flags.limit);
+  const previous = partial
+    ? new Map(
+        ((await readJson(path.join(ROOT, "data", "products.json"))) ?? []).map(
+          (p) => [String(p.id), p],
+        ),
+      )
+    : new Map();
+
   const products = [];
 
   for (const row of rows) {
-    const scraped = byId.get(row.id);
-    if (!scraped || scraped.error) continue;
-
     const oldPrice = toNumber(row.old_price);
     const promoPrice = toNumber(row.promo_price);
     if (oldPrice == null || promoPrice == null) continue;
+
+    const scraped = byId.get(row.id);
+    if (!scraped || scraped.error) {
+      const kept = previous.get(row.id);
+      if (kept)
+        products.push({
+          ...kept,
+          category: groupSlug(row.group),
+          subcategory: catSlug(row.category),
+          old_price: oldPrice,
+          promo_price: promoPrice,
+          discount_pct: discountPct(oldPrice, promoPrice),
+        });
+      continue;
+    }
 
     const images = scraped.localImages?.length ? scraped.localImages : scraped.images;
 
@@ -836,9 +976,14 @@ async function main() {
 
   // ---- categories -------------------------------------------------------
 
+  // Built from `products` rather than from the CSV rows, so it lists exactly
+  // the buckets that have something in them — and so a partial run does not
+  // drop the categories of the products it carried over untouched.
+  const rowById = new Map(rows.map((r) => [r.id, r]));
   const tree = new Map();
-  for (const row of rows) {
-    if (!byId.get(row.id) || byId.get(row.id).error) continue;
+  for (const product of products) {
+    const row = rowById.get(product.id);
+    if (!row) continue;
     const catId = groupSlug(row.group);
     if (!tree.has(catId))
       tree.set(catId, { id: catId, label: groupLabel(row.group), subcategories: new Map() });

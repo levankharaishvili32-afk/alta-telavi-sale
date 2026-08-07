@@ -76,6 +76,9 @@ export default async function ProductPage({ params, searchParams }: PageProps) {
     (src, i, all) => src && all.indexOf(src) === i,
   );
   const bundle = bundleFor(product.id);
+  const hasSpecs =
+    Object.keys(product.specs).length > 0 ||
+    Object.keys(product.specs_other ?? {}).length > 0;
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
@@ -212,13 +215,16 @@ export default async function ProductPage({ params, searchParams }: PageProps) {
         </div>
       </div>
 
-      {/* Specs */}
-      <section className="mt-14">
-        <h2 className="text-lg font-bold text-alta-purple-deep">
-          მახასიათებლები
-        </h2>
-        <SpecTable specs={product.specs} other={product.specs_other} />
-      </section>
+      {/* Specs. Omitted entirely for a product whose attributes have not been
+          scraped yet — a heading over an empty box is worse than no heading. */}
+      {hasSpecs && (
+        <section className="mt-14">
+          <h2 className="text-lg font-bold text-alta-purple-deep">
+            მახასიათებლები
+          </h2>
+          <SpecTable specs={product.specs} other={product.specs_other} />
+        </section>
+      )}
 
       {/* Related */}
       {related.length > 0 && (
