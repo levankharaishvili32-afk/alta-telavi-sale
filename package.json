@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "node scripts/build-feed.js --skip-image-check && next build",
     "start": "next start",
     "lint": "eslint",
     "validate:data": "node scripts/validate-data.mjs",
@@ -14,7 +14,8 @@
     "bundles": "node scripts/build-bundles.mjs",
     "specs": "node scripts/normalize-specs.mjs",
     "comparisons": "node scripts/build-comparisons.mjs",
-    "search-index": "node scripts/build-search-index.mjs"
+    "search-index": "node scripts/build-search-index.mjs",
+    "feed": "node scripts/build-feed.js"
   },
   "dependencies": {
     "@fontsource/firago": "^5.3.0",

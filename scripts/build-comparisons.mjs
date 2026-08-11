@@ -46,6 +46,10 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+// Shared with build-feed.js, which needs the same notion of "same model, other
+// colour" for g:item_group_id. Two copies would silently drift.
+import { baseModelKey } from "./lib/variants.mjs";
+
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const PRODUCTS_FILE = path.join(ROOT, "data", "products.json");
 const SCHEMA_FILE = path.join(ROOT, "data", "spec-schema.json");
@@ -96,72 +100,6 @@ async function readJson(file) {
   } catch {
     return null;
   }
-}
-
-/** Colour words that appear in titles, in both languages the catalog mixes. */
-const COLOUR_WORDS = [
-  "black", "white", "grey", "gray", "silver", "gold", "golden", "blue",
-  "green", "red", "pink", "violet", "purple", "yellow", "orange", "brown",
-  "beige", "cream", "titanium", "graphite", "midnight", "starlight", "sierra",
-  "space", "navy", "mint", "lavender", "cyan", "teal", "bronze", "copper",
-  "charcoal", "sand", "desert", "velvet", "ocean", "icy", "nova", "meteor",
-  "obsidian", "moonlight", "sunrise", "transparent", "clear",
-  "შავი", "თეთრი", "ნაცრისფერი", "ვერცხლისფერი", "ოქროსფერი", "ლურჯი",
-  "მწვანე", "წითელი", "ვარდისფერი", "იისფერი", "ყვითელი", "ნარინჯისფერი",
-];
-
-const CAPACITY = /\b\d+(gb|tb|mb|mah|w|hz|mp|ml|l)\b/gi;
-const NETWORK = /\b(5g|4g|lte|wi-?fi|dual ?sim|duos|nfc|esim)\b/gi;
-const BRACKETED = /\([^)]*\)|\[[^\]]*\]/g;
-
-/** Qualifiers that genuinely separate two models, not two colours. */
-const TIER_WORDS = new Set([
-  "pro", "plus", "ultra", "max", "lite", "mini", "fe", "se", "air", "prime",
-  "neo", "edge", "note", "+",
-]);
-
-/**
- * Reduce a title to the model underneath it, so colour and storage variants
- * collapse onto one key.
- *
- * Stripping a list of colour words is not enough on its own — the catalog
- * ships "Icy Blue", "Silver Shadow", "Ocean Cian", "Meteor Silver", and the
- * vocabulary has no end. What every model name *does* have is a token
- * containing a digit: S25, X6c, M170, 50V6C, 15. Colours never do. So the key
- * is everything up to and including the last digit-bearing token, plus a
- * following tier word if there is one — which keeps Honor 600 and Honor 600
- * Pro apart while folding all six colours of each together.
- */
-function baseModelKey(product) {
-  let title = norm(product.title)
-    .replace(BRACKETED, " ")
-    .replace(CAPACITY, " ")
-    .replace(NETWORK, " ")
-    // "12GB/512GB" leaves a bare slash behind; "8/256" needs removing outright.
-    .replace(/\b\d+\s*\/\s*\d+\b/g, " ")
-    .replace(/[-–—_,/]+/g, " ");
-
-  for (const colour of COLOUR_WORDS) {
-    title = title.replace(new RegExp(`\\b${colour}\\b`, "gi"), " ");
-  }
-
-  const words = title.split(/\s+/).filter(Boolean);
-  let last = -1;
-  for (const [i, word] of words.entries()) if (/\d/.test(word)) last = i;
-
-  let key;
-  if (last === -1) {
-    // No model designator at all ("Apple iPhone Air"). Cap at three tokens:
-    // colour names are two words often enough — "Cloud White", "Light Gold" —
-    // that stripping the known colour still leaves a distinguishing tail.
-    key = words.slice(0, 3).join(" ");
-  } else {
-    const tail = words[last + 1];
-    key = words.slice(0, last + (tail && TIER_WORDS.has(tail) ? 2 : 1)).join(" ");
-  }
-
-  // Never collapse everything onto one empty key.
-  return `${product.category}/${product.subcategory}/${key || product.id}`;
 }
 
 /** Pull the leading number out of a spec value: "6.1\"" → 6.1, "8 GB" → 8. */
