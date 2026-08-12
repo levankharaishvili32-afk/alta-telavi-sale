@@ -14,7 +14,7 @@
     "Your edits survive a re-run — existing order is kept, newly-discovered",
     "keys are appended at the end. `--reset` regenerates from scratch."
   ],
-  "generated_at": "2026-08-07",
+  "generated_at": "2026-08-12",
   "aliases": {
     "შესრუტვის სიმძლავრე": "შეწოვის სიმძლავრე",
     "ეკრანი": "დიაგონალი",
@@ -429,7 +429,7 @@
     },
     "home/vacuum": {
       "label": "მტვერსასრუტები",
-      "products": 9,
+      "products": 5,
       "keys": [
         "დიაგონალი",
         "ელემენტის მოცულობა",
@@ -452,7 +452,9 @@
         "ელექტროსადენის სიგრძე",
         "დამუხტვის დრო",
         "ელემენტის ტიპი",
-        "მტვრის ყუთის ტიპი"
+        "მტვრის ყუთის ტიპი",
+        "სიჩქარეების რაოდენობა",
+        "ფილტრის ტიპი"
       ]
     },
     "home/waffle-maker": {

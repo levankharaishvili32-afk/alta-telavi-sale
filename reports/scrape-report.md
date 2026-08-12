@@ -1,6 +1,6 @@
 # alta.ge სქრეიპის ანგარიში
 
-დაწყება: 2026-08-07 15:11
+დაწყება: 2026-08-12 07:15
 რეჟიმი: full + no-images
 
 | მაჩვენებელი | რაოდენობა |
@@ -12,7 +12,21 @@
 | შეცდომით დასრულდა | 5 |
 | ფოტოს გარეშე | 0 |
 | ფიდიდან აღდგენილი (მახასიათებლების გარეშე) | 32 |
+| ხელით ამოღებული (excluded-products.json) | 4 |
 | CSV-ში ფასის კონფლიქტით მონიშნული | 0 |
+
+## ხელით ამოღებული (4)
+
+ეს პროდუქტები ფასების ფაილშია, საიტზე კი განზრახ არ ხვდება —
+`data/excluded-products.json`-ის მიხედვით. დასაბრუნებლად წაშალეთ იქიდან
+შესაბამისი სტრიქონი და თავიდან გაუშვით `npm run scrape`.
+
+| კოდი | CSV დასახელება | მიზეზი |
+| --- | --- | --- |
+| 99555 | Samsung VC18M31A0HP Red | Samsung VC18M31A0HP — removed at Levan's request, 12 Aug 2026 |
+| 103123 | Samsung VC21K5170HG/EV Hepa13, 2100W, Suction-440w,Noise-84dBA,Weight-5.5 kg, 294x337x450 | Samsung VC21K5170HG/EV — removed at Levan's request, 12 Aug 2026 |
+| 120636 | Samsung Jet 60 Cordless Stick Vacuum Cleaner JET VS15A6031R5/EV | Samsung Jet VS15A6031R5/EV — removed at Levan's request, 12 Aug 2026 |
+| 79508 | Samsung VC18M21C0VN/EV | Samsung VC18M21C0VN/EV — removed at Levan's request, 12 Aug 2026 |
 
 ## ფიდიდან აღდგენილი (32)
 

@@ -690,7 +690,7 @@ function buildFilterableSpecs(products) {
 
 // ------------------------------------------------------------------ report
 
-async function writeReport({ rows, results, flags, started }) {
+async function writeReport({ rows, results, flags, started, excluded }) {
   const failed = [];
   const notFound = [];
   const noImages = [];
@@ -705,6 +705,7 @@ async function writeReport({ rows, results, flags, started }) {
     } else ok.push(r);
   }
 
+  const excludedRows = rows.filter((r) => excluded?.has(r.id));
   const imageFailures = results.filter((r) => r.imageFailures?.length);
   // Built from the Meta feed because alta.ge could not be reached. They render
   // correctly but carry no specifications, so they cannot be compared and no
@@ -742,8 +743,19 @@ async function writeReport({ rows, results, flags, started }) {
 | შეცდომით დასრულდა | ${failed.length} |
 | ფოტოს გარეშე | ${noImages.length} |
 | ფიდიდან აღდგენილი (მახასიათებლების გარეშე) | ${feedBuilt.length} |
+| ხელით ამოღებული (excluded-products.json) | ${excludedRows.length} |
 | CSV-ში ფასის კონფლიქტით მონიშნული | ${conflicts.length} |
 
+## ხელით ამოღებული (${excludedRows.length})
+
+ეს პროდუქტები ფასების ფაილშია, საიტზე კი განზრახ არ ხვდება —
+\`data/excluded-products.json\`-ის მიხედვით. დასაბრუნებლად წაშალეთ იქიდან
+შესაბამისი სტრიქონი და თავიდან გაუშვით \`npm run scrape\`.
+
+${table(
+  excludedRows.map((r) => `| ${r.id} | ${r.title.replace(/\|/g, "/")} | ${String(excluded.get(r.id) ?? "").replace(/\|/g, "/")} |`),
+  ["კოდი", "CSV დასახელება", "მიზეზი"],
+)}
 ## ფიდიდან აღდგენილი (${feedBuilt.length})
 
 alta.ge მიუწვდომელი იყო, ამიტომ ეს პროდუქტები \`data/alta-catalog.json\`-იდან
@@ -912,6 +924,20 @@ async function main() {
   const byId = new Map(results.map((r) => [String(r.id), r]));
 
   /*
+   * Products held off the site by hand, from data/excluded-products.json.
+   *
+   * Applied here rather than by deleting a CSV row, because a CSV row does not
+   * stay deleted: the CSV is rebuilt from whatever workbook the commercial team
+   * sends next, and the product would silently return. Filtering at the point
+   * products.json is written means one list governs the site, the feed, the
+   * search index and everything else downstream.
+   */
+  const excludedFile = await readJson(
+    path.join(ROOT, "data", "excluded-products.json"),
+  );
+  const excluded = new Map(Object.entries(excludedFile?.excluded ?? {}));
+
+  /*
    * What a partial run must not do is delete everything it did not look at.
    * `--only`, `--limit` and `--probe` all narrow the queue, and this merge
    * writes the whole of products.json — so without this, `--only 161393` would
@@ -931,6 +957,8 @@ async function main() {
   const products = [];
 
   for (const row of rows) {
+    if (excluded.has(row.id)) continue;
+
     const oldPrice = toNumber(row.old_price);
     const promoPrice = toNumber(row.promo_price);
     if (oldPrice == null || promoPrice == null) continue;
@@ -1005,7 +1033,7 @@ async function main() {
     buildFilterableSpecs(products),
   );
 
-  const summary = await writeReport({ rows, results, flags, started });
+  const summary = await writeReport({ rows, results, flags, started, excluded });
 
   console.log(
     `\nჩაწერილია data/products.json — ${products.length} პროდუქტი, ` +

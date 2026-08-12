@@ -1,6 +1,6 @@
 {
- "generated_at": "2026-08-07T15:13:58.026Z",
- "products": 312,
+ "generated_at": "2026-08-12T07:17:00.690Z",
+ "products": 308,
  "code_pattern": "^\\d{5,7}$",
  "aliases": [
   {
@@ -544,54 +544,6 @@
    }
   },
   {
-   "id": "99555",
-   "title": "Samsung VC18M31A0HP",
-   "brand": "Samsung",
-   "category": "მტვერსასრუტები",
-   "latin": {
-    "title": "samsung vc 18 m 31 a 0 hp",
-    "brand": "samsung",
-    "category": "mtversasrutebi"
-   },
-   "ka": {
-    "title": "სამსუნგ ვც 18 მ 31 ა 0 ხპ",
-    "brand": "სამსუნგ",
-    "category": "მთვერსასრუთები"
-   }
-  },
-  {
-   "id": "103123",
-   "title": "Samsung VC21K5170HG/EV",
-   "brand": "Samsung",
-   "category": "მტვერსასრუტები",
-   "latin": {
-    "title": "samsung vc 21 k 5170 hg ev",
-    "brand": "samsung",
-    "category": "mtversasrutebi"
-   },
-   "ka": {
-    "title": "სამსუნგ ვც 21 ქ 5170 ხგ ევ",
-    "brand": "სამსუნგ",
-    "category": "მთვერსასრუთები"
-   }
-  },
-  {
-   "id": "120636",
-   "title": "Samsung Jet VS15A6031R5/EV",
-   "brand": "Samsung",
-   "category": "მტვერსასრუტები",
-   "latin": {
-    "title": "samsung jet vs 15 a 6031 r 5 ev",
-    "brand": "samsung",
-    "category": "mtversasrutebi"
-   },
-   "ka": {
-    "title": "სამსუნგ ჯეთ ვს 15 ა 6031 რ 5 ევ",
-    "brand": "სამსუნგ",
-    "category": "მთვერსასრუთები"
-   }
-  },
-  {
    "id": "100194",
    "title": "Braun SI3054GY",
    "brand": "Braun",
@@ -669,22 +621,6 @@
     "title": "სენცორ სფნ 9025 ვხ აირ ცოოლერ",
     "brand": "სენცორ",
     "category": "ქლიმათური თექნიქა"
-   }
-  },
-  {
-   "id": "79508",
-   "title": "Samsung VC18M21C0VN/EV",
-   "brand": "Samsung",
-   "category": "მტვერსასრუტები",
-   "latin": {
-    "title": "samsung vc 18 m 21 c 0 vn ev",
-    "brand": "samsung",
-    "category": "mtversasrutebi"
-   },
-   "ka": {
-    "title": "სამსუნგ ვც 18 მ 21 ც 0 ვნ ევ",
-    "brand": "სამსუნგ",
-    "category": "მთვერსასრუთები"
    }
   },
   {

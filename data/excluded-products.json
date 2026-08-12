@@ -1,0 +1,30 @@
+{
+  "_readme": [
+    "Products that must not appear on the site, whatever the price list says.",
+    "",
+    "Format: \"<product code>\": \"why\". The code is the same id used everywhere",
+    "else — the barCode from the commercial team's file.",
+    "",
+    "This exists because removing a product by hand does not stay removed. The",
+    "site is regenerated from data/telavi-products.csv by `npm run scrape`, and",
+    "that CSV is regenerated from whatever workbook the commercial team sends",
+    "next. Delete a row from either and the next import quietly puts it back.",
+    "An id listed here is dropped at the point products.json is written, so it",
+    "survives both.",
+    "",
+    "Every entry is a decision somebody made, so write down whose and why —",
+    "otherwise the list becomes a set of codes nobody dares remove.",
+    "",
+    "To put a product back on the site, delete its line and run:",
+    "  npm run scrape -- --no-images --from-feed",
+    "  npm run specs && npm run bundles -- --from-feed",
+    "  npm run comparisons && npm run search-index && npm run feed"
+  ],
+
+  "excluded": {
+    "120636": "Samsung Jet VS15A6031R5/EV — removed at Levan's request, 12 Aug 2026",
+    "103123": "Samsung VC21K5170HG/EV — removed at Levan's request, 12 Aug 2026",
+    "99555": "Samsung VC18M31A0HP — removed at Levan's request, 12 Aug 2026",
+    "79508": "Samsung VC18M21C0VN/EV — removed at Levan's request, 12 Aug 2026"
+  }
+}
