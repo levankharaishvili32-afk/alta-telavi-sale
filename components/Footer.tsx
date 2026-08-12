@@ -2,7 +2,7 @@ import Image from "next/image";
 import { CAMPAIGN_END_INCLUSIVE } from "@/lib/campaign";
 
 const BRANCH = {
-  address: "თელავი, ერეკლე II-ის გამზირი",
+  address: "ქ. თელავი, ალაზნის გამზირი 77, სავაჭრო ცენტრი „თელავი მოლი“",
   hours: "ორშ – შაბ: 10:00 – 20:00",
   phone: "+995 32 238 00 38",
   /** `tel:` needs the number without spaces. */

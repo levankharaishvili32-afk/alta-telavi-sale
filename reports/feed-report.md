@@ -1,6 +1,6 @@
 # Meta პროდუქტ-ფიდის ანგარიში
 
-გენერირებულია: Wed, 12 Aug 2026 07:17:31 GMT
+გენერირებულია: Wed, 12 Aug 2026 10:52:11 GMT
 მისამართი: https://alta-telavi-sale.vercel.app/feed.xml
 ფაილი: public/feed.xml (566 KB)
 
