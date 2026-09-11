@@ -1,6 +1,9 @@
-# თელავის დიდი ფასდაკლება — კამპანიის ლენდინგი
+# ალტას რეგიონული კამპანიის ლენდინგი — გლდანის cashback
 
-Campaign landing site for the ALTA Telavi sale. Next.js (App Router) +
+Campaign landing site for ALTA branch promotions. Currently the Gldani
+cashback campaign (12–13 September); it ran the Telavi sale before that, and
+the campaign's name, dates and branch live in `lib/campaign.ts`. Next.js
+(App Router) +
 Tailwind CSS v4. The catalog is a local JSON file imported from the shop's
 product feed — no backend, no database at runtime.
 
@@ -64,7 +67,7 @@ resistance (same team as Next.js, free tier, no configuration):
 
    ```bash
    git add -A
-   git commit -m "ALTA Telavi campaign landing"
+   git commit -m "ALTA Gldani cashback landing"
    git branch -M main
    git remote add origin https://github.com/<user>/<repo>.git
    git push -u origin main

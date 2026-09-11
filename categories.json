@@ -1,0 +1,218 @@
+[
+  {
+    "id": "home",
+    "label": "თეთრი ტექნიკა",
+    "subcategories": [
+      {
+        "id": "air-fryer",
+        "label": "აეროგრილები"
+      },
+      {
+        "id": "blender",
+        "label": "ბლენდერები"
+      },
+      {
+        "id": "kettle",
+        "label": "ელექტროჩაიდნები"
+      },
+      {
+        "id": "waffle-maker",
+        "label": "ვაფლის აპარატები"
+      },
+      {
+        "id": "climate",
+        "label": "კლიმატური ტექნიკა"
+      },
+      {
+        "id": "microwave",
+        "label": "მიკროტალღური ღუმელები"
+      },
+      {
+        "id": "mixer",
+        "label": "მიქსერები"
+      },
+      {
+        "id": "vacuum",
+        "label": "მტვერსასრუტები"
+      },
+      {
+        "id": "multi-boiler",
+        "label": "მულტიქვაბები"
+      },
+      {
+        "id": "popcorn-maker",
+        "label": "პოპკორნის აპარატები"
+      },
+      {
+        "id": "milk-frother",
+        "label": "რძის ამომყვანები"
+      },
+      {
+        "id": "kitchen-machine",
+        "label": "სამზარეულოს კომბაინები"
+      },
+      {
+        "id": "sandwich-maker",
+        "label": "სენდვიჩმეიკერები"
+      },
+      {
+        "id": "beauty-health",
+        "label": "სილამაზე და ჯანმრთელობა"
+      },
+      {
+        "id": "toaster",
+        "label": "ტოსტერები"
+      },
+      {
+        "id": "iron",
+        "label": "უთოები"
+      },
+      {
+        "id": "oven",
+        "label": "ღუმელები"
+      },
+      {
+        "id": "coffee-maker",
+        "label": "ყავის აპარატები"
+      },
+      {
+        "id": "coffee-press",
+        "label": "ყავის პრესები"
+      },
+      {
+        "id": "coffee-grinder",
+        "label": "ყავის საფქვავები"
+      },
+      {
+        "id": "chopper",
+        "label": "ჩოპერები"
+      },
+      {
+        "id": "fruit-dryer",
+        "label": "ხილის საშრობები"
+      },
+      {
+        "id": "meat-machine",
+        "label": "ხორცსაკეპები"
+      },
+      {
+        "id": "boiler",
+        "label": "ჰოთ-დოგის აპარატები"
+      }
+    ]
+  },
+  {
+    "id": "mobile",
+    "label": "მობილურები და აქსესუარები",
+    "subcategories": [
+      {
+        "id": "smartphone",
+        "label": "სმარტფონები"
+      }
+    ]
+  },
+  {
+    "id": "it",
+    "label": "IT ტექნიკა",
+    "subcategories": [
+      {
+        "id": "adapter",
+        "label": "ადაპტერები"
+      },
+      {
+        "id": "cooling-stand",
+        "label": "გამაგრილებელი სადგამები"
+      },
+      {
+        "id": "hdd-external",
+        "label": "გარე მყარი დისკები"
+      },
+      {
+        "id": "speaker",
+        "label": "დინამიკები"
+      },
+      {
+        "id": "keyboard",
+        "label": "კლავიატურები"
+      },
+      {
+        "id": "mouse",
+        "label": "მაუსები"
+      },
+      {
+        "id": "mouse-pad",
+        "label": "მაუსპადები"
+      },
+      {
+        "id": "flash-card",
+        "label": "მეხსიერების ბარათები"
+      },
+      {
+        "id": "microphone",
+        "label": "მიკროფონები"
+      },
+      {
+        "id": "monitor",
+        "label": "მონიტორები"
+      },
+      {
+        "id": "pc-all-in-one",
+        "label": "მონობლოკები"
+      },
+      {
+        "id": "notebook",
+        "label": "ნოუთბუქები"
+      },
+      {
+        "id": "notebook-bag",
+        "label": "ნოუთბუქის ჩანთები"
+      },
+      {
+        "id": "printer",
+        "label": "პრინტერები"
+      },
+      {
+        "id": "router",
+        "label": "როუტერები"
+      },
+      {
+        "id": "tablet",
+        "label": "ტაბლეტები"
+      },
+      {
+        "id": "ups",
+        "label": "უწყვეტი კვების წყაროები"
+      },
+      {
+        "id": "flash-drive",
+        "label": "ფლეშ მეხსიერება"
+      },
+      {
+        "id": "headphone",
+        "label": "ყურსასმენები"
+      },
+      {
+        "id": "hdd-internal",
+        "label": "შიდა მყარი დისკები"
+      },
+      {
+        "id": "joystick",
+        "label": "ჯოისტიკები"
+      }
+    ]
+  },
+  {
+    "id": "tv-gaming",
+    "label": "ტელევიზორები და გეიმინგი",
+    "subcategories": [
+      {
+        "id": "gaming",
+        "label": "გეიმინგი"
+      },
+      {
+        "id": "tv",
+        "label": "ტელევიზორები"
+      }
+    ]
+  }
+]

@@ -1,0 +1,210 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------ */
+/* Brand fonts                                                         */
+/* ------------------------------------------------------------------ */
+/* Ubuntu — Latin + numerals. FiraGO — the brand face.                 */
+/* @fontsource ships FiraGO with the Latin subset only, so Georgian     */
+/* falls through to Noto Sans Georgian by default. Drop the official    */
+/* FiraGO Georgian webfonts into public/fonts/ (see README) and the     */
+/* @font-face rules below pick them up ahead of the fallback.           */
+@import "@fontsource/ubuntu/400.css";
+@import "@fontsource/ubuntu/500.css";
+@import "@fontsource/ubuntu/700.css";
+@import "@fontsource/firago/400.css";
+@import "@fontsource/firago/500.css";
+@import "@fontsource/firago/700.css";
+@import "@fontsource/noto-sans-georgian/400.css";
+@import "@fontsource/noto-sans-georgian/500.css";
+@import "@fontsource/noto-sans-georgian/700.css";
+
+@font-face {
+  font-family: "FiraGO Georgian";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src:
+    url("/fonts/firago-georgian-400.woff2") format("woff2"),
+    url("/fonts/firago-georgian-400.woff") format("woff");
+  unicode-range: U+10A0-10FF, U+1C90-1CBF, U+2D00-2D2F;
+}
+@font-face {
+  font-family: "FiraGO Georgian";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src:
+    url("/fonts/firago-georgian-500.woff2") format("woff2"),
+    url("/fonts/firago-georgian-500.woff") format("woff");
+  unicode-range: U+10A0-10FF, U+1C90-1CBF, U+2D00-2D2F;
+}
+@font-face {
+  font-family: "FiraGO Georgian";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src:
+    url("/fonts/firago-georgian-700.woff2") format("woff2"),
+    url("/fonts/firago-georgian-700.woff") format("woff");
+  unicode-range: U+10A0-10FF, U+1C90-1CBF, U+2D00-2D2F;
+}
+
+/* ------------------------------------------------------------------ */
+/* Design tokens — ALTA brand refresh                                  */
+/* ------------------------------------------------------------------ */
+@theme {
+  --font-sans:
+    "Ubuntu", "FiraGO", "FiraGO Georgian", "Noto Sans Georgian", "BPG Arial",
+    "Sylfaen", system-ui, sans-serif;
+
+  /* Colours sampled from the brand book vectors */
+  --color-alta-purple: #652d8f;
+  --color-alta-purple-deep: #3d2956;
+  --color-alta-magenta: #8f278d;
+  --color-alta-pink: #ae236b;
+  --color-alta-crimson: #cc2047;
+  --color-alta-red: #eb1c24;
+  --color-alta-flame: #ef5a28;
+  --color-alta-orange: #f5911e;
+  --color-alta-teal: #29e1cf;
+
+  /* Purple tints for surfaces and borders */
+  --color-alta-50: #f6f2fa;
+  --color-alta-100: #ece2f4;
+  --color-alta-200: #d9c5e8;
+  --color-alta-300: #bd9bd6;
+  --color-alta-400: #9a68be;
+  --color-alta-500: #7b3fa3;
+  --color-alta-600: #652d8f;
+  --color-alta-700: #542577;
+  --color-alta-800: #45215f;
+  --color-alta-900: #3d2956;
+
+  /* Signature asymmetric corner radii */
+  --radius-alta: 4px;
+  --radius-alta-lg: 28px;
+  --radius-alta-xl: 56px;
+}
+
+/* The 60° gradient ramp from the brand book */
+@utility alta-gradient {
+  background-image: linear-gradient(
+    60deg,
+    var(--color-alta-purple) 0%,
+    var(--color-alta-magenta) 30%,
+    var(--color-alta-crimson) 55%,
+    var(--color-alta-red) 72%,
+    var(--color-alta-flame) 86%,
+    var(--color-alta-orange) 100%
+  );
+}
+
+@utility alta-gradient-deep {
+  background-image: linear-gradient(
+    60deg,
+    var(--color-alta-purple-deep) 0%,
+    var(--color-alta-purple) 55%,
+    var(--color-alta-magenta) 100%
+  );
+}
+
+/*
+ * The brand's signature silhouette: one large radius on the top-left,
+ * a matching one on the bottom-right, near-square on the other two.
+ */
+@utility alta-corners {
+  border-top-left-radius: var(--radius-alta-lg);
+  border-bottom-right-radius: var(--radius-alta-lg);
+  border-top-right-radius: var(--radius-alta);
+  border-bottom-left-radius: var(--radius-alta);
+}
+
+@utility alta-corners-xl {
+  border-top-left-radius: var(--radius-alta-xl);
+  border-bottom-right-radius: var(--radius-alta-xl);
+  border-top-right-radius: var(--radius-alta);
+  border-bottom-left-radius: var(--radius-alta);
+}
+
+/* Thin gradient rule used as a section divider / top border */
+@utility alta-rule {
+  background-image: linear-gradient(
+    90deg,
+    var(--color-alta-purple),
+    var(--color-alta-magenta),
+    var(--color-alta-red),
+    var(--color-alta-orange)
+  );
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #ffffff;
+  color: var(--color-alta-purple-deep);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background-color: var(--color-alta-teal);
+  color: var(--color-alta-purple-deep);
+}
+
+/* Dual-thumb range slider (two stacked inputs) */
+input[type="range"].range-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  pointer-events: none;
+}
+input[type="range"].range-thumb::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  pointer-events: auto;
+  height: 1.125rem;
+  width: 1.125rem;
+  border-radius: 9999px;
+  background: #ffffff;
+  border: 3px solid var(--color-alta-purple);
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgb(61 41 86 / 0.35);
+}
+input[type="range"].range-thumb::-moz-range-thumb {
+  pointer-events: auto;
+  height: 1.125rem;
+  width: 1.125rem;
+  border-radius: 9999px;
+  background: #ffffff;
+  border: 3px solid var(--color-alta-purple);
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgb(61 41 86 / 0.35);
+}
+input[type="range"].range-thumb:focus-visible::-webkit-slider-thumb {
+  outline: 2px solid var(--color-alta-magenta);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* The Messenger nudge sliding out from behind its button. */
+@keyframes messenger-slide {
+  from {
+    opacity: 0;
+    transform: translateX(0.75rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "_comment": "Maps the category slug in a product's shop URL to the site's category tree. Slugs that are missing here still import — they become their own top-level category with a prettified label — so a feed update never breaks the build.",
+  "groups": {
+    "kitchen": "სამზარეულოს ტექნიკა",
+    "care": "პერსონალური მოვლა",
+    "home": "სახლის ტექნიკა"
+  },
+  "slugs": {
+    "samzareulos-tsvrili-teqnika": {
+      "group": "kitchen",
+      "label": "სამზარეულოს წვრილი ტექნიკა"
+    },
+    "yavis-aparati": { "group": "kitchen", "label": "ყავის აპარატები" },
+    "yavis-moyvarultatvis": {
+      "group": "kitchen",
+      "label": "ყავის აქსესუარები"
+    },
+    "blenderi-da-choperi": {
+      "group": "kitchen",
+      "label": "ბლენდერები და ჩოპერები"
+    },
+    "aerogrili": { "group": "kitchen", "label": "აეროგრილები" },
+    "tsversaparsi": { "group": "care", "label": "წვერსაპარსები" },
+    "tmis-uto": { "group": "care", "label": "თმის უთოები" },
+    "tmis-feni": { "group": "care", "label": "თმის ფენები" },
+    "trimeri": { "group": "care", "label": "ტრიმერები" },
+    "mtversasruti": { "group": "home", "label": "მტვერსასრუტები" },
+    "uto": { "group": "home", "label": "უთოები" },
+    "klimaturi-teqnika": { "group": "home", "label": "კლიმატური ტექნიკა" }
+  }
+}
