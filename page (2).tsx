@@ -46,9 +46,10 @@ export async function generateMetadata({
   const { id } = await params;
   const product = getProduct(id);
   if (!product) return { title: "პროდუქტი ვერ მოიძებნა" };
+  const discount = discountPercent(product.old_price, product.promo_price);
   return {
     title: product.title,
-    description: `${product.title} — ${formatPrice(product.promo_price)}. cashback აქცია ალტას გლდანის ფილიალში, 12–13 სექტემბერს.`,
+    description: `${product.title} — ${formatPrice(product.promo_price)} (−${discount}%). დიდი ფასდაკლება ალტას გლდანის ფილიალში, 12–13 სექტემბერს.`,
   };
 }
 

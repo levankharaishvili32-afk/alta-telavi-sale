@@ -59,7 +59,7 @@ const DEFAULT_DOMAIN = "https://alta-gldani-cashback.vercel.app";
 
 const UTM = {
   source: "Facebookads",
-  campaign: "gldani_cashback_september",
+  campaign: "gldani_september",
 };
 
 /** Meta truncates past these; better to cut deliberately than be cut. */
@@ -195,8 +195,8 @@ function generateDescription(product, { subcategoryLabel, discount }) {
 
   parts.push(
     discount > 0
-      ? `აქციის ფასი ${product.promo_price}₾ — cashback აქცია ალტას გლდანის ფილიალში, 12–13 სექტემბერს.`
-      : "cashback აქცია ალტას გლდანის ფილიალში, 12–13 სექტემბერს.",
+      ? `ფასდაკლება ${discount}% — ${product.promo_price}₾ ${product.old_price}₾-ის ნაცვლად. ალტა, გლდანის ფილიალი, 12–13 სექტემბერს.`
+      : "ალტა, გლდანის ფილიალი, 12–13 სექტემბერს.",
   );
 
   return parts.join(" ");
@@ -542,10 +542,10 @@ async function main() {
     '<?xml version="1.0" encoding="UTF-8"?>',
     '<rss version="2.0" xmlns:g="http://base.google.com/ns/1.0">',
     "  <channel>",
-    `    <title>${escapeXml("ალტა — cashback აქცია გლდანში")}</title>`,
+    `    <title>${escapeXml("ალტა — დიდი ფასდაკლება გლდანში")}</title>`,
     `    <link>${escapeXml(domain)}</link>`,
     `    <description>${escapeXml(
-      "ალტას გლდანის ფილიალის cashback კატალოგი Meta Commerce Manager-ისთვის.",
+      "ალტას გლდანის ფილიალის სააქციო კატალოგი Meta Commerce Manager-ისთვის.",
     )}</description>`,
     `    <lastBuildDate>${now}</lastBuildDate>`,
     ...items.map(renderItem),

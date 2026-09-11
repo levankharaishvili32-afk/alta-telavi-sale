@@ -1,10 +1,10 @@
 /**
  * Campaign identity and dates, in one place.
  *
- * The Gldani campaign is a cashback promotion running on two days only, which
- * is a different shape from the Telavi sale it replaces: that one ran until an
- * end date, this one is a window. So the exported strings name a window rather
- * than a deadline, and nothing derives one from the other.
+ * The Gldani promotion runs on two days only, which is a different shape from
+ * the Telavi sale it replaces: that one ran until an end date, this one is a
+ * window. So the exported strings name a window rather than a deadline, and
+ * nothing derives one from the other.
  *
  * Every form is spelled out rather than built by concatenation, because
  * Georgian inflects: "12–13 სექტემბერი" becomes "12–13 სექტემბერს" when it

@@ -3,7 +3,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { deepestDiscounts, products } from "@/lib/catalog";
-import { CAMPAIGN_BRANCH_IN, CAMPAIGN_DATES_ONLY } from "@/lib/campaign";
+import { discountPercent } from "@/lib/format";
+import { CAMPAIGN_BRANCH_IN, CAMPAIGN_DATES_ON } from "@/lib/campaign";
 import { rangesFor, searchProducts } from "@/lib/search";
 import { installSearchQueriesHelper, recordSearch } from "@/lib/search-log";
 import {
@@ -160,15 +161,20 @@ export default function Catalog() {
     if (outcome.kind === "text") recordSearch(filters.q, outcome.hits.length);
   }, [filters.q, outcome]);
   /*
-   * The Telavi sale advertised "up to 80% off" here, a figure taken from the
-   * price columns. This campaign is cashback, and a cashback rate is not the
-   * same number as a discount depth — it is whatever the commercial team set,
-   * and nothing in this data says what that is. Printing the discount figure
-   * under a cashback headline would advertise a rate nobody agreed to, so the
-   * line names the offer and the window instead, and stops there.
-   *
-   * When the rate is confirmed, put it back as a constant here.
+   * The deepest discount actually in the catalog, computed rather than
+   * advertised. The Telavi page carried a hardcoded 80 because the campaign
+   * had been sold on that number; this one has no such figure agreed, and a
+   * headline percentage nobody signed off on is not one to invent. When the
+   * commercial team names one, take the maximum of it and this — "%-მდე" means
+   * *up to*, so the larger of the two is the honest line either way.
    */
+  const maxDiscount = useMemo(
+    () =>
+      Math.max(
+        ...products.map((p) => discountPercent(p.old_price, p.promo_price)),
+      ),
+    [],
+  );
   const activeCount = activeFilterCount(filters);
   const shareQuery = canonical ? `?${canonical}` : "";
 
@@ -210,10 +216,11 @@ export default function Catalog() {
           search results, and this is the page's actual subject. */}
       <header className="mb-6 border-b border-alta-100 pb-5">
         <h1 className="text-2xl font-bold text-alta-purple-deep sm:text-3xl">
-          დიდი cashback აქცია გლდანში!
+          დიდი ფასდაკლება გლდანში!
         </h1>
         <p className="mt-1.5 text-sm text-alta-700">
-          {products.length} პროდუქტი — {`${CAMPAIGN_DATES_ONLY}, ${CAMPAIGN_BRANCH_IN}.`}
+          {products.length} პროდუქტი {maxDiscount}%-მდე ფასდაკლებით —{" "}
+          {`${CAMPAIGN_DATES_ON}, ${CAMPAIGN_BRANCH_IN}.`}
         </p>
       </header>
 

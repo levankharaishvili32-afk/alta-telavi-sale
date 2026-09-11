@@ -11,11 +11,11 @@ import MessengerButton from "@/components/MessengerButton";
 
 export const metadata: Metadata = {
   title: {
-    default: "დიდი cashback აქცია გლდანში!",
-    template: "%s — cashback აქცია გლდანში",
+    default: "დიდი ფასდაკლება გლდანში!",
+    template: "%s — დიდი ფასდაკლება გლდანში",
   },
   description:
-    "ალტას cashback აქცია გლდანის ფილიალში — 12–13 სექტემბერს. სამზარეულოს, სახლისა და პერსონალური მოვლის ტექნიკა, ოფიციალური გარანტიით.",
+    "სამზარეულოს, სახლისა და პერსონალური მოვლის ტექნიკის დიდი ფასდაკლება ალტას გლდანის ფილიალში — 12–13 სექტემბერს. ფასები ლარში, ოფიციალური გარანტიით.",
 };
 
 export default function RootLayout({

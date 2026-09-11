@@ -149,7 +149,7 @@ export default function Footer() {
         </div>
 
         <p className="alta-corners mt-8 border-l-4 border-alta-teal bg-alta-50 px-4 py-3 text-xs leading-relaxed text-alta-700">
-          cashback აქცია მოქმედებს მხოლოდ{" "}
+          აქციის ფასები მოქმედებს მხოლოდ{" "}
           {`${CAMPAIGN_BRANCH_IN}, ${CAMPAIGN_DATES_ON}`} ან მარაგის
           ამოწურვამდე. ფასები მითითებულია ლარში, დღგ-ის ჩათვლით.
         </p>
